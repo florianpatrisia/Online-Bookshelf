@@ -1,0 +1,20 @@
+{
+  "name": "online-bookshelf",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "prepare": "husky install",
+    "format:backend": "cd backend && ./gradlew format",
+    "format:frontend": "cd frontend && npm run format",
+    "lint": "npm run format:frontend && npm run format:backend"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3"
+  },
+  "commitlint": {
+    "extends": ["@commitlint/config-conventional"]
+  }
+}
