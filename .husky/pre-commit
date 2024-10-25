@@ -1,4 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-cd frontend && npx lint-staged && cd ../backend && ./gradlew format
+cd "$(git rev-parse --show-toplevel)/frontend" && npx lint-staged
+cd "$(git rev-parse --show-toplevel)/backend" && ./gradlew format
