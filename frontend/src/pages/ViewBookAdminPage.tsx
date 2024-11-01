@@ -18,7 +18,8 @@ const BookViewAdminPage: React.FC = () => {
                 const bookData = await fetchBookById(id!) // Fetch book data from the API
                 setBook(bookData)
             } catch (error) {
-                setError('Book not found.')
+                // setError('Book not found.')
+                setError(error)
             } finally {
                 setLoading(false)
             }
@@ -35,6 +36,7 @@ const BookViewAdminPage: React.FC = () => {
             // await deleteBookById(id!) // Delete the book via API
             navigate('/books') // Navigate back to the books list
         } catch (error) {
+            setError(error)
             setError('Failed to delete the book.')
         }
     }

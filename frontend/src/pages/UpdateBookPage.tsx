@@ -19,6 +19,7 @@ const UpdateBookPage: React.FC = () => {
                 setLoading(false)
             } catch (error) {
                 setError('Failed to fetch book')
+                setError(error)
                 setLoading(false)
             }
         }
