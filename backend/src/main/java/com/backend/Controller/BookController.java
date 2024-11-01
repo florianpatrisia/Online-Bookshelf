@@ -14,17 +14,18 @@ import java.util.List;
 @RequestMapping("books")
 public class BookController {
 
-    private static final Logger logger = LoggerFactory.getLogger(BookController.class);
+	private static final Logger logger = LoggerFactory.getLogger(BookController.class);
 
-    private final BookService bookService;
+	private final BookService bookService;
 
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
+	public BookController(BookService bookService) {
+		this.bookService = bookService;
+	}
 
-    @GetMapping
-    public List<Book> getAllBooks() {
-        logger.info("Getting all books");
-        return bookService.getAllBooks();
-    }
+	@GetMapping
+	public List<Book> getAllBooks() {
+		logger.info("Getting all books");
+		return bookService.getAllBooks();
+	}
+
 }
