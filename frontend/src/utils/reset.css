@@ -1,0 +1,12 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --color-background-primary: rgb(251, 251, 251);
+    --color-background-secondary: hsla(0, 0%, 98%, 0.623);
+    --color-font-primary: rgb(29, 29, 31);
+    --color-font-secondary: #b64501;
+}
