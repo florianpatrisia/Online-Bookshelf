@@ -37,7 +37,7 @@ module.exports = {
         '@typescript-eslint/no-unused-vars': 'warn', // Warns for unused variables
         'react/react-in-jsx-scope': 'off', // Turn off React import requirement for JSX (React 17+)
         'react/prop-types': 'off', // Turns off prop-types validation (we're using TypeScript)
-        //'react-refresh/only-export-components': [ 'warn', { allowConstantExport: true } ], // Warns if non-component exports are used //TO DO: add back later
+        //'react-refresh/only-export-components': [ 'warn', { allowConstantExport: true } ], // Warns if non-component exports are used //TO DO: add the check back later
     },
     settings: {
         react: {
