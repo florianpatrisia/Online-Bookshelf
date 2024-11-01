@@ -2,37 +2,24 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import AddBookPage from './pages/AddBookPage.tsx'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import UpdateBookPage from './pages/UpdateBookPage.tsx'
+import BookViewAdminPage from './pages/ViewBookAdminPage.tsx'
+import BookViewUserPage from './pages/ViewBookUserPage.tsx'
 
-function App() {
-    const [count, setCount] = useState(0)
-
+const App: React.FC = () => {
     return (
-        <>
-            <div>
-                <a href="https://vite.dev" target="_blank" rel="noreferrer">
-                    <img src={viteLogo} className="logo" alt="Vite logo" />
-                </a>
-                <a href="https://react.dev" target="_blank" rel="noreferrer">
-                    <img
-                        src={reactLogo}
-                        className="logo react"
-                        alt="React logo"
-                    />
-                </a>
-            </div>
-            <h1>Vite + React</h1>
-            <div className="card">
-                <button onClick={() => setCount((count) => count + 1)}>
-                    count is {count}
-                </button>
-                <p>
-                    Edit <code>src/App.tsx</code> what you see here.
-                </p>
-            </div>
-            <p className="read-the-docs">
-                Click on the Vite and React logos to learn more
-            </p>
-        </>
+        <div>
+            <AddBookPage />
+            {/*<Routes>*/}
+            {/*<Route path="/add-book" component={AddBookPage} />*/}
+            {/*<Route path="/" element={<Navigate to="/book/1" />} />*/}
+            {/*<Route path="/book/:id" element={<BookViewUserPage />} />*/}
+            {/*<Route path="/book/:id" element={<BookViewAdminPage />} />*/}
+            {/*<Route path="/edit-book/:id" element={<UpdateBookPage />} />*/}
+            {/*</Routes>*/}
+        </div>
     )
 }
 

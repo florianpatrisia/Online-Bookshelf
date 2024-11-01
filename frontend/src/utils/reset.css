@@ -1,0 +1,23 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root{
+    --color-background-primary:rgb(251, 251, 251);
+    --color-background-secondary:hsla(0, 0%, 98%, 0.623);
+    --color-font-primary:rgb(29, 29, 31);
+    --color-font-secondary:#B64501;
+    --color-button-primary: #ff5733;
+    --color-button-secondary: #c1462c;
+}
+
+.btn-primary {
+    background-color: var(--color-button-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-button-secondary);
+}
