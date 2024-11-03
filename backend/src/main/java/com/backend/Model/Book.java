@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
+
 @Getter
 @Setter
 @Entity
@@ -30,7 +32,7 @@ public class Book {
 	private Double price;
 
 	@Column(name = "image")
-	private String image;
+	private byte[] image;
 
 	@Column(name = "rating")
 	private Double rating;
@@ -44,7 +46,7 @@ public class Book {
 	@Override
 	public String toString() {
 		return "Book{" + "title='" + title + '\'' + ", author='" + author + '\'' + ", description='" + description
-				+ '\'' + ", price=" + price + ", image_url='" + image + '\'' + ", rating=" + rating
+				+ '\'' + ", price=" + price + ", image='" + Arrays.toString(image) + '\'' + ", rating=" + rating
 				+ ", available_count=" + available_count + ", category='" + category + '\'' + '}';
 	}
 

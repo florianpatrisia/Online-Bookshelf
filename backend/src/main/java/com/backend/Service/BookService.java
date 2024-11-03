@@ -5,6 +5,7 @@ import com.backend.Repository.BookRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BookService {
@@ -19,4 +20,15 @@ public class BookService {
 		return bookRepository.findAll();
 	}
 
+	public Optional<Book> getBookById(Long id) {
+		return bookRepository.findById(Math.toIntExact(id));
+	}
+
+	public Book saveBook(Book book) {
+		return bookRepository.save(book);
+	}
+
+	public void deleteBook(Long id) {
+		bookRepository.deleteById(Math.toIntExact(id));
+	}
 }
