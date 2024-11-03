@@ -4,6 +4,7 @@ import com.backend.Model.Book;
 import com.backend.Service.BookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,14 +12,16 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin("http://localhost:3000")
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/api/books")
 public class BookController {
 
 	private static final Logger logger = LoggerFactory.getLogger(BookController.class);
 
 	private final BookService bookService;
 
+	@Autowired
 	public BookController(BookService bookService) {
 		this.bookService = bookService;
 	}
