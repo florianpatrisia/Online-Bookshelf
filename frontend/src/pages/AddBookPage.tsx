@@ -5,7 +5,6 @@ import { Book } from '../models/Book'
 const AddBookPage: React.FC = () => {
     const { addBook } = useBookContext()
     const [imagePreview, setImagePreview] = useState<string | null>(null)
-    const [description, setDescription] = useState<string>('')
     const [formData, setFormData] = useState({
         title: '',
         author: '',
@@ -37,7 +36,6 @@ const AddBookPage: React.FC = () => {
     ) => {
         const value = event.target.value
         if (value.length <= 800) {
-            setDescription(value)
             setFormData((prevData) => ({ ...prevData, description: value }))
         }
     }
