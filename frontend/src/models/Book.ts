@@ -4,7 +4,7 @@ export interface Book {
     author: string
     description: string
     price: number
-    image: string
+    image: string | null
     rating: number
     availableCount: number
     category: string

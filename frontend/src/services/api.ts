@@ -1,18 +1,29 @@
 import { Book } from '../models/Book.ts'
+import { BackendBook } from '../models/BackendBook.ts'
 
 export const API_BASE_URL = 'http://localhost:8080'
 
-export const fetchBookById = async (id: string): Promise<Book> => {
-    const response = await fetch(`${API_BASE_URL}/api/books/${id}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
+export const fetchBookById = async (id: number): Promise<Book> => {
+    const response = await fetch(`${API_BASE_URL}/api/books/${id}`)
     if (!response.ok) {
         throw new Error('Failed to fetch book')
     }
-    return response.json()
+
+    const data: BackendBook = await response.json()
+
+    console.log(data)
+
+    return {
+        _id: data.book_id,
+        title: data.title,
+        author: data.author,
+        description: data.description,
+        price: data.price,
+        image: data.image,
+        rating: data.rating,
+        availableCount: data.available_count,
+        category: data.category,
+    }
 }
 
 export const fetchBooks = async (): Promise<Book[]> => {
@@ -20,7 +31,22 @@ export const fetchBooks = async (): Promise<Book[]> => {
     if (!response.ok) {
         throw new Error('Failed to fetch books')
     }
-    return await response.json()
+
+    const data: BackendBook[] = await response.json()
+
+    console.log('Data', data)
+
+    return data.map((book) => ({
+        _id: book.book_id,
+        title: book.title,
+        author: book.author,
+        description: book.description,
+        price: book.price,
+        image: book.image,
+        rating: book.rating,
+        availableCount: book.available_count,
+        category: book.category,
+    }))
 }
 
 export const createBook = async (book: Book): Promise<Book> => {
@@ -50,7 +76,7 @@ export const createBook = async (book: Book): Promise<Book> => {
 }
 
 export const updateBookService = async (
-    id: string,
+    id: number,
     updatedBook: Partial<Book>
 ): Promise<Book> => {
     console.log('Booook ' + updatedBook)
@@ -67,7 +93,7 @@ export const updateBookService = async (
     return await response.json()
 }
 
-export const deleteBookService = async (id: string): Promise<void> => {
+export const deleteBookService = async (id: number): Promise<void> => {
     const response = await fetch(`${API_BASE_URL}/api/books/${id}`, {
         method: 'DELETE',
     })

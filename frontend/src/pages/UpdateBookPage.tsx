@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Book } from '../models/Book.ts'
 import { useBookContext } from '../context/BooksContext'
+import MyNavbar from '../components/Navbar/Navbar.tsx'
 
 const UpdateBookPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>()
+    const { id } = useParams<{ id: number }>()
     const navigate = useNavigate()
     const { getBookById, updateBook } = useBookContext()
     const [formData, setFormData] = useState<Book | null>(null)
@@ -61,6 +62,8 @@ const UpdateBookPage: React.FC = () => {
 
     return (
         <div className="container mt-5">
+            <MyNavbar />
+            <br></br>
             <h2>Edit Book</h2>
             <form onSubmit={handleSubmit}>
                 <div className="mb-3">
