@@ -1,4 +1,4 @@
-import {
+import React, {
     createContext,
     ReactNode,
     useContext,
@@ -8,9 +8,9 @@ import {
 import { Book } from '../models/Book'
 import {
     createBook,
-    fetchBooks,
-    fetchBookById,
     deleteBookService,
+    fetchBookById,
+    fetchBooks,
     updateBookService,
 } from '../services/api'
 
@@ -18,9 +18,9 @@ export interface BooksContext {
     books: Book[]
     addBook: (book: Book) => Promise<void>
     setBooks: React.Dispatch<React.SetStateAction<Book[]>>
-    getBookById: (id: string) => Promise<Book | undefined>
-    deleteBook: (id: string) => void
-    updateBook: (id: string, updatedBook: Book) => Promise<void>
+    getBookById: (id: number) => Promise<Book | undefined>
+    deleteBook: (id: number) => Promise<void>
+    updateBook: (id: number, updatedBook: Book) => Promise<void>
 }
 
 const initialBooks: Book[] = []
@@ -28,9 +28,9 @@ const BooksContext = createContext<BooksContext>({
     books: initialBooks,
     addBook: async () => {},
     updateBook: async () => {},
-    deleteBook: () => {},
+    deleteBook: async () => {},
     setBooks: () => {},
-    getBookById: () => undefined,
+    getBookById: async () => undefined,
 })
 
 export const useBookContext = () => useContext(BooksContext)
@@ -62,7 +62,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
         }
     }
 
-    const updateBook = async (id: string, book: Partial<Book>) => {
+    const updateBook = async (id: number, book: Partial<Book>) => {
         try {
             const updatedBook = await updateBookService(id, book)
             setBooks((prevBooks) =>
@@ -73,7 +73,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
         }
     }
 
-    const deleteBook = async (id: string) => {
+    const deleteBook = async (id: number) => {
         try {
             await deleteBookService(id)
             setBooks((prevBooks) => prevBooks.filter((b) => b._id !== id))
@@ -82,7 +82,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
         }
     }
 
-    const getBookById = async (id: string): Promise<Book | undefined> => {
+    const getBookById = async (id: number): Promise<Book | undefined> => {
         try {
             console.log('Context ID ' + id)
             const book = await fetchBookById(id)

@@ -5,9 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { fetchBookById } from '../services/api' // Import the function to fetch book data
 import { Book } from '../models/Book.ts'
+import MyNavbar from '../components/Navbar/Navbar.tsx'
 
 const BookViewUserPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>()
+    const { id } = useParams<{ id: number }>()
 
     const [book, setBook] = useState<Book | null>(null)
     const [loading, setLoading] = useState<boolean>(true)
@@ -33,10 +34,14 @@ const BookViewUserPage: React.FC = () => {
 
     return (
         <div className="container mt-5">
+            <MyNavbar />
+            <br></br>
+            <br></br>
+            <br></br>
             <div className="row">
                 <div className="col-md-4">
                     <img
-                        src={book.image}
+                        src={book.image || undefined}
                         alt={book.title}
                         className="img-fluid"
                         style={{

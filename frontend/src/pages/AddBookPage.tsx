@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useBookContext } from '../context/BooksContext'
 import { Book } from '../models/Book'
+import MyNavbar from '../components/Navbar/Navbar.tsx'
 
 const AddBookPage: React.FC = () => {
     const { addBook } = useBookContext()
@@ -80,6 +81,8 @@ const AddBookPage: React.FC = () => {
 
     return (
         <div className="container mt-5">
+            <MyNavbar />
+            <br></br>
             <h2 className="mb-4">Add a New Book</h2>
             <form id="bookForm" onSubmit={handleSubmit}>
                 <div className="mb-3">

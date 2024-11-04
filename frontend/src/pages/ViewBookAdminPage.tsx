@@ -4,9 +4,10 @@ import StarRating from '../components/StarRating'
 // import { fetchBookById } from '../services/api' // Import your API functions
 import { Book } from '../models/Book.ts'
 import { useBookContext } from '../context/BooksContext'
+import MyNavbar from '../components/Navbar/Navbar.tsx'
 
 const BookViewAdminPage: React.FC = () => {
-    const { id } = useParams<{ id: string }>()
+    const { id } = useParams<{ id: number }>()
     const navigate = useNavigate()
     const { getBookById, deleteBook } = useBookContext()
     const [book, setBook] = useState<Book | null>(null)
@@ -38,7 +39,7 @@ const BookViewAdminPage: React.FC = () => {
     const handleDeleteClick = async () => {
         try {
             await deleteBook(id!)
-            navigate('/books')
+            navigate('/')
         } catch (error) {
             setError(error)
             setError('Failed to delete the book.')
@@ -59,11 +60,15 @@ const BookViewAdminPage: React.FC = () => {
 
     return (
         <div className="container mt-5">
+            <MyNavbar />
+            <br></br>
+            <br></br>
+            <br></br>
             <div className="row">
                 {/* First column - Image */}
                 <div className="col-md-4">
                     <img
-                        src={book!.image}
+                        src={book!.image || undefined}
                         alt={book!.title}
                         className="img-fluid"
                         style={{
