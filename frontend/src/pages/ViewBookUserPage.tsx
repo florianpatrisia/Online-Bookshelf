@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { fetchBookById } from '../services/api' // Import the function to fetch book data
 import { Book } from '../models/Book.ts'
-import '../utils/reset.css'
 
 const BookViewUserPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()
@@ -15,17 +14,17 @@ const BookViewUserPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        if (id) {
-            fetchBookById(id)
-                .then((bookData) => {
-                    setBook(bookData)
-                    setLoading(false)
-                })
-                .catch((error) => {
-                    setError(error.message)
-                    setLoading(false)
-                })
+        const fetchBook = async () => {
+            try {
+                const bookData = await fetchBookById(id!) // Fetch book data from the API
+                setBook(bookData)
+            } catch (error) {
+                setError(error.message || 'Book not found.')
+            } finally {
+                setLoading(false)
+            }
         }
+        fetchBook()
     }, [id])
 
     if (loading) return <div className="container mt-5">Loading...</div>

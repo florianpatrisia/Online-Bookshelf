@@ -1,9 +1,20 @@
 import React, { useState } from 'react'
-import '../utils/reset.css'
+import { useBookContext } from '../context/BooksContext'
+import { Book } from '../models/Book'
 
 const AddBookPage: React.FC = () => {
+    const { addBook } = useBookContext()
     const [imagePreview, setImagePreview] = useState<string | null>(null)
-    const [description, setDescription] = useState<string>('')
+    const [formData, setFormData] = useState({
+        title: '',
+        author: '',
+        category: '',
+        description: '',
+        price: 0,
+        rating: 0,
+        available_count: 0,
+        image: null as string | null,
+    })
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
@@ -11,6 +22,10 @@ const AddBookPage: React.FC = () => {
             const reader = new FileReader()
             reader.onloadend = () => {
                 setImagePreview(reader.result as string)
+                setFormData((prevData) => ({
+                    ...prevData,
+                    image: reader.result as string,
+                }))
             }
             reader.readAsDataURL(file)
         }
@@ -21,14 +36,52 @@ const AddBookPage: React.FC = () => {
     ) => {
         const value = event.target.value
         if (value.length <= 800) {
-            setDescription(value)
+            setFormData((prevData) => ({ ...prevData, description: value }))
+        }
+    }
+
+    const handleInputChange = (
+        event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => {
+        const { name, value } = event.target
+        setFormData((prevData) => ({
+            ...prevData,
+            [name]:
+                name === 'price' ||
+                name === 'rating' ||
+                name === 'available_count'
+                    ? Number(value)
+                    : value,
+        }))
+    }
+
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault()
+
+        const bookData: Book = {
+            title: formData.title,
+            author: formData.author,
+            category: formData.category,
+            description: formData.description,
+            price: formData.price,
+            rating: formData.rating,
+            availableCount: formData.available_count,
+            image: formData.image,
+        }
+
+        try {
+            console.log('Form Data:', formData)
+            await addBook(bookData)
+            alert('Book added successfully!')
+        } catch (error) {
+            console.error('Error adding book:', error)
         }
     }
 
     return (
         <div className="container mt-5">
             <h2 className="mb-4">Add a New Book</h2>
-            <form id="bookForm">
+            <form id="bookForm" onSubmit={handleSubmit}>
                 <div className="mb-3">
                     <label htmlFor="title" className="form-label">
                         Title:
@@ -38,6 +91,7 @@ const AddBookPage: React.FC = () => {
                         id="title"
                         name="title"
                         className="form-control"
+                        onChange={handleInputChange}
                         required
                     />
                 </div>
@@ -51,6 +105,7 @@ const AddBookPage: React.FC = () => {
                         id="author"
                         name="author"
                         className="form-control"
+                        onChange={handleInputChange}
                         required
                     />
                 </div>
@@ -64,11 +119,11 @@ const AddBookPage: React.FC = () => {
                         name="description"
                         className="form-control"
                         placeholder="Enter a brief description"
-                        value={description}
+                        value={formData.description}
                         onChange={handleDescriptionChange}
                         required
                     ></textarea>
-                    <small>{description.length} / 800 characters</small>
+                    {/*<small>{description.length} / 800 characters</small>*/}
                 </div>
 
                 <div className="mb-3">
@@ -79,6 +134,7 @@ const AddBookPage: React.FC = () => {
                         id="category"
                         name="category"
                         className="form-select"
+                        onChange={handleInputChange}
                         required
                     >
                         <option value="" disabled selected>
@@ -93,7 +149,6 @@ const AddBookPage: React.FC = () => {
                         <option value="History">History</option>
                         <option value="Romance">Romance</option>
                         <option value="Horror">Horror</option>
-                        {/*{/AICI PUTEM MODIFICA/}*/}
                     </select>
                 </div>
 
@@ -107,6 +162,7 @@ const AddBookPage: React.FC = () => {
                         name="price"
                         className="form-control"
                         step="0.1"
+                        onChange={handleInputChange}
                         required
                     />
                 </div>
@@ -123,6 +179,7 @@ const AddBookPage: React.FC = () => {
                         step="0.01"
                         min="0.01"
                         max="5.0"
+                        onChange={handleInputChange}
                         required
                     />
                 </div>
@@ -136,6 +193,7 @@ const AddBookPage: React.FC = () => {
                         id="available_count"
                         name="available_count"
                         className="form-control"
+                        onChange={handleInputChange}
                         required
                     />
                 </div>

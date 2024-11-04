@@ -44,7 +44,8 @@ public class BookController {
 		if (book.getImage() != null) {
 			try {
 				book.setImage(Base64.getDecoder().decode(new String(book.getImage())));
-			} catch (IllegalArgumentException e) {
+			}
+			catch (IllegalArgumentException e) {
 				logger.error("Invalid Base64 input for image", e);
 				return ResponseEntity.badRequest().body(null);
 			}
@@ -68,7 +69,8 @@ public class BookController {
 			updatedBook.setAvailable_count(bookDetails.getAvailable_count());
 			updatedBook.setCategory(bookDetails.getCategory());
 			return ResponseEntity.ok(bookService.saveBook(updatedBook));
-		} else {
+		}
+		else {
 			return ResponseEntity.notFound().build();
 		}
 	}
@@ -109,8 +111,10 @@ public class BookController {
 				existingBook.setCategory(bookDetails.getCategory());
 			}
 			return ResponseEntity.ok(bookService.saveBook(existingBook));
-		} else {
+		}
+		else {
 			return ResponseEntity.notFound().build();
 		}
 	}
+
 }
