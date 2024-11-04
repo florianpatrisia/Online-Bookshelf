@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import StarRating from '../components/StarRating'
-import { fetchBookById } from '../services/api' // Import your API functions
+// import { fetchBookById } from '../services/api' // Import your API functions
 import { Book } from '../models/Book.ts'
-import '../utils/reset.css'
+import { useBookContext } from '../context/BooksContext'
 
 const BookViewAdminPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
+    const { getBookById, deleteBook } = useBookContext()
     const [book, setBook] = useState<Book | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -15,17 +16,20 @@ const BookViewAdminPage: React.FC = () => {
     useEffect(() => {
         const fetchBook = async () => {
             try {
-                const bookData = await fetchBookById(id!) // Fetch book data from the API
-                setBook(bookData)
+                const bookData = await getBookById(id!)
+                if (!bookData) {
+                    setError('Book not found.')
+                } else {
+                    setBook(bookData)
+                }
             } catch (error) {
-                // setError('Book not found.')
-                setError(error)
+                setError(error.message || 'Book not found.')
             } finally {
                 setLoading(false)
             }
         }
         fetchBook()
-    }, [id])
+    }, [id, getBookById])
 
     const handleUpdateClick = () => {
         navigate(`/edit-book/${id}`) // Navigate to the edit page
@@ -33,8 +37,8 @@ const BookViewAdminPage: React.FC = () => {
 
     const handleDeleteClick = async () => {
         try {
-            // await deleteBookById(id!) // Delete the book via API
-            navigate('/books') // Navigate back to the books list
+            await deleteBook(id!)
+            navigate('/books')
         } catch (error) {
             setError(error)
             setError('Failed to delete the book.')
@@ -47,6 +51,10 @@ const BookViewAdminPage: React.FC = () => {
 
     if (error) {
         return <div className="container mt-5">{error}</div>
+    }
+
+    if (!book) {
+        return <div className="container mt-5">Book not found.</div>
     }
 
     return (

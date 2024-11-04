@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { fetchBookById } from '../services/api.ts' // Adjust the import path as necessary
 import { Book } from '../models/Book.ts'
-import '../utils/reset.css'
+import { useBookContext } from '../context/BooksContext'
 
 const UpdateBookPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
+    const { getBookById, updateBook } = useBookContext()
     const [formData, setFormData] = useState<Book | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -14,17 +14,20 @@ const UpdateBookPage: React.FC = () => {
     useEffect(() => {
         const fetchBook = async () => {
             try {
-                const book = await fetchBookById(id!)
-                setFormData(book)
-                setLoading(false)
+                const book = await getBookById(id!)
+                if (!book) {
+                    setError('Book not found.')
+                } else {
+                    setFormData(book)
+                    setLoading(false)
+                }
             } catch (error) {
-                setError('Failed to fetch book')
-                setError(error)
+                setError(error.message || 'Failed to fetch book')
                 setLoading(false)
             }
         }
         fetchBook()
-    }, [id])
+    }, [id, getBookById])
 
     if (loading) {
         return <div>Loading...</div>
@@ -47,12 +50,13 @@ const UpdateBookPage: React.FC = () => {
         setFormData({ ...formData, [name]: value })
     }
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        // Update the book data in your state or database
         console.log('Updated book:', formData)
-        // Navigate back to the book view page
-        navigate(`/book/${id}`) // Navigate instead of history.push
+        if (formData) {
+            await updateBook(id!, formData)
+            navigate(`/books/${id}`)
+        }
     }
 
     return (
