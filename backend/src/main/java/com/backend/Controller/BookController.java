@@ -4,11 +4,11 @@ import com.backend.Model.Book;
 import com.backend.Service.BookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +21,6 @@ public class BookController {
 
 	private final BookService bookService;
 
-	@Autowired
 	public BookController(BookService bookService) {
 		this.bookService = bookService;
 	}
@@ -40,81 +39,115 @@ public class BookController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Book> createBook(@RequestBody Book book) {
-		if (book.getImage() != null) {
-			try {
-				book.setImage(Base64.getDecoder().decode(new String(book.getImage())));
-			}
-			catch (IllegalArgumentException e) {
-				logger.error("Invalid Base64 input for image", e);
-				return ResponseEntity.badRequest().body(null);
-			}
+	public ResponseEntity<String> createBook(@RequestParam("title") String title,
+											 @RequestParam("author") String author,
+											 @RequestParam("description") String description,
+											 @RequestParam("price") Double price,
+											 @RequestParam("image") MultipartFile image,
+											 @RequestParam("rating") Double rating,
+											 @RequestParam("available_count") Integer availableCount,
+											 @RequestParam("category") String category) {
+
+		if (title.isEmpty() || author.isEmpty() || description.isEmpty() || price == null || image.isEmpty() || rating == null || availableCount == null || category.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Some fields are empty!");
 		}
-		Book savedBook = bookService.saveBook(book);
+		Book savedBook = new Book();
+		savedBook.setTitle(title);
+		savedBook.setAuthor(author);
+		savedBook.setDescription(description);
+		savedBook.setPrice(price);
+		savedBook.setImage(bookService.saveFileToAWSS3Bucket(image));
+		savedBook.setRating(rating);
+		savedBook.setAvailable_count(availableCount);
+		savedBook.setCategory(category);
+		bookService.saveBook(savedBook);
 		System.out.println(savedBook);
-		return ResponseEntity.ok(savedBook);
+		return ResponseEntity.ok("Book saved successfully");
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
-		Optional<Book> book = bookService.getBookById(id);
-		if (book.isPresent()) {
-			Book updatedBook = book.get();
-			updatedBook.setTitle(bookDetails.getTitle());
-			updatedBook.setAuthor(bookDetails.getAuthor());
-			updatedBook.setDescription(bookDetails.getDescription());
-			updatedBook.setPrice(bookDetails.getPrice());
-			updatedBook.setImage(bookDetails.getImage());
-			updatedBook.setRating(bookDetails.getRating());
-			updatedBook.setAvailable_count(bookDetails.getAvailable_count());
-			updatedBook.setCategory(bookDetails.getCategory());
-			return ResponseEntity.ok(bookService.saveBook(updatedBook));
-		}
-		else {
-			return ResponseEntity.notFound().build();
+	public ResponseEntity<String> updateBook(
+			@PathVariable Long id,
+			@RequestParam("title") String title,
+			@RequestParam("author") String author,
+			@RequestParam("description") String description,
+			@RequestParam("price") Double price,
+			@RequestParam("image") MultipartFile image,
+			@RequestParam("rating") Double rating,
+			@RequestParam("available_count") Integer availableCount,
+			@RequestParam("category") String category) {
+
+		Optional<Book> existingBook = bookService.getBookById(id);
+		if (existingBook.isPresent()) {
+			if (title.isEmpty() || author.isEmpty() || description.isEmpty() || price == null || image.isEmpty() || rating == null || availableCount == null || category.isEmpty()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Some fields are empty!");
+			}
+
+			String imageUrl = image.isEmpty() ? existingBook.get().getImage() : bookService.saveFileToAWSS3Bucket(image);
+
+			Book updatedBook = existingBook.get();
+			updatedBook.setTitle(title);
+			updatedBook.setAuthor(author);
+			updatedBook.setDescription(description);
+			updatedBook.setPrice(price);
+			updatedBook.setImage(imageUrl);
+			updatedBook.setRating(rating);
+			updatedBook.setAvailable_count(availableCount);
+			updatedBook.setCategory(category);
+
+			bookService.saveBook(updatedBook);
+			return ResponseEntity.ok("Book updated successfully");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
 		}
 	}
+
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-		bookService.deleteBook(id);
-		return ResponseEntity.noContent().build();
-	}
-
-	@PatchMapping("/{id}")
-	public ResponseEntity<Book> partiallyUpdateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
+	public ResponseEntity<String> deleteBook(@PathVariable Long id) {
 		Optional<Book> book = bookService.getBookById(id);
 		if (book.isPresent()) {
-			Book existingBook = book.get();
-			if (bookDetails.getTitle() != null) {
-				existingBook.setTitle(bookDetails.getTitle());
-			}
-			if (bookDetails.getAuthor() != null) {
-				existingBook.setAuthor(bookDetails.getAuthor());
-			}
-			if (bookDetails.getDescription() != null) {
-				existingBook.setDescription(bookDetails.getDescription());
-			}
-			if (bookDetails.getPrice() != null) {
-				existingBook.setPrice(bookDetails.getPrice());
-			}
-			if (bookDetails.getImage() != null) {
-				existingBook.setImage(bookDetails.getImage());
-			}
-			if (bookDetails.getRating() != null) {
-				existingBook.setRating(bookDetails.getRating());
-			}
-			if (bookDetails.getAvailable_count() != null) {
-				existingBook.setAvailable_count(bookDetails.getAvailable_count());
-			}
-			if (bookDetails.getCategory() != null) {
-				existingBook.setCategory(bookDetails.getCategory());
-			}
-			return ResponseEntity.ok(bookService.saveBook(existingBook));
-		}
-		else {
-			return ResponseEntity.notFound().build();
+			bookService.deleteBook(id);
+			return ResponseEntity.ok("Book deleted successfully");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
 		}
 	}
 
+
+	@PatchMapping("/{id}")
+	public ResponseEntity<String> partiallyUpdateBook(
+			@PathVariable Long id,
+			@RequestParam(value = "title", required = false) String title,
+			@RequestParam(value = "author", required = false) String author,
+			@RequestParam(value = "description", required = false) String description,
+			@RequestParam(value = "price", required = false) Double price,
+			@RequestParam(value = "image", required = false) MultipartFile image,
+			@RequestParam(value = "rating", required = false) Double rating,
+			@RequestParam(value = "available_count", required = false) Integer availableCount,
+			@RequestParam(value = "category", required = false) String category) {
+
+		Optional<Book> existingBook = bookService.getBookById(id);
+		if (existingBook.isPresent()) {
+			Book bookToUpdate = existingBook.get();
+
+			if (title != null) bookToUpdate.setTitle(title);
+			if (author != null) bookToUpdate.setAuthor(author);
+			if (description != null) bookToUpdate.setDescription(description);
+			if (price != null) bookToUpdate.setPrice(price);
+			if (rating != null) bookToUpdate.setRating(rating);
+			if (availableCount != null) bookToUpdate.setAvailable_count(availableCount);
+			if (category != null) bookToUpdate.setCategory(category);
+
+			if (image != null && !image.isEmpty()) {
+				String imageUrl = bookService.saveFileToAWSS3Bucket(image);
+				bookToUpdate.setImage(imageUrl);
+			}
+
+			bookService.saveBook(bookToUpdate);
+			return ResponseEntity.ok("Book partially updated successfully");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
+		}
+	}
 }
