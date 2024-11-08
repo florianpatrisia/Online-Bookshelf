@@ -20,6 +20,7 @@ import java.util.Optional;
 
 @Service
 public class BookService {
+
 	@Value("${aws.s3.access.key}")
 	private String awsS3AccessKey;
 
@@ -58,20 +59,23 @@ public class BookService {
 			BasicAWSCredentials awsCredentials = new BasicAWSCredentials(awsS3AccessKey, awsS3SecretKey);
 
 			AmazonS3 amazonS3Client = AmazonS3ClientBuilder.standard()
-					.withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
-					.withRegion(Regions.EU_NORTH_1)
-					.build();
+				.withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
+				.withRegion(Regions.EU_NORTH_1)
+				.build();
 
 			InputStream inputStream = file.getInputStream();
 			ObjectMetadata objectMetadata = new ObjectMetadata();
 
 			objectMetadata.setContentType("image/jpeg");
-			PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, s3FileName, inputStream, objectMetadata);
+			PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, s3FileName, inputStream,
+					objectMetadata);
 			amazonS3Client.putObject(putObjectRequest);
 			return "https://" + bucketName + ".s3.amazonaws.com/" + s3FileName;
-		} catch (Exception e) {
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e.getMessage());
 		}
 	}
+
 }
