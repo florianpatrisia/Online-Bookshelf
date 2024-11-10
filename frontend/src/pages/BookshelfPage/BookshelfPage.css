@@ -1,0 +1,21 @@
+.card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -8px;
+}
+
+.card {
+    flex: 0 0 calc(20% - 16px);
+    margin: 8px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+.mb-4 {
+    margin: 60px 0;
+    text-align: center;
+    color: var(--color-font-primary);
+    font-size: var(--size-font-m);
+    font-weight: normal;
+}
