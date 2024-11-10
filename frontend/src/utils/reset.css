@@ -11,6 +11,9 @@
     --color-font-secondary: #b64501;
     --color-button-primary: #ff5733;
     --color-button-secondary: #c1462c;
+    --color-shadow-primary: rgb(94, 92, 92);
+    --size-font-s: 2rem;
+    --size-font-m: 3rem;
 }
 
 .btn-primary {

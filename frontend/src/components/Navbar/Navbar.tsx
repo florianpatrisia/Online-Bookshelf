@@ -22,7 +22,7 @@ const MyNavbar: React.FC = () => {
                     <Link to="/" className="nav-link">
                         Home
                     </Link>
-                    <Nav.Link href="#my-books">My Books/Shelf</Nav.Link>
+                    <Nav.Link href="/bookshelf">Bookshelf</Nav.Link>
                     <Nav.Link href="#my-account">My Account</Nav.Link>
                     <Nav.Link href="#cart">Cart</Nav.Link>
                 </Nav>
