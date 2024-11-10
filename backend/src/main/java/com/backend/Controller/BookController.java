@@ -1,14 +1,14 @@
 package com.backend.Controller;
 
 import com.backend.Model.Book;
+import com.backend.RequestModel.BookRequest;
 import com.backend.Service.BookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +21,6 @@ public class BookController {
 
 	private final BookService bookService;
 
-	@Autowired
 	public BookController(BookService bookService) {
 		this.bookService = bookService;
 	}
@@ -40,80 +39,102 @@ public class BookController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Book> createBook(@RequestBody Book book) {
-		if (book.getImage() != null) {
-			try {
-				book.setImage(Base64.getDecoder().decode(new String(book.getImage())));
-			}
-			catch (IllegalArgumentException e) {
-				logger.error("Invalid Base64 input for image", e);
-				return ResponseEntity.badRequest().body(null);
-			}
+	public ResponseEntity<String> createBook(@ModelAttribute BookRequest bookRequest) {
+		if (bookRequest.getTitle().isEmpty() || bookRequest.getAuthor().isEmpty()
+				|| bookRequest.getDescription().isEmpty() || bookRequest.getPrice() == null
+				|| bookRequest.getImage().isEmpty() || bookRequest.getRating() == null
+				|| bookRequest.getAvailable_count() == null || bookRequest.getCategory().isEmpty()) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Some fields are empty!");
 		}
-		Book savedBook = bookService.saveBook(book);
-		System.out.println(savedBook);
-		return ResponseEntity.ok(savedBook);
+
+		Book savedBook = new Book();
+		savedBook.setTitle(bookRequest.getTitle());
+		savedBook.setAuthor(bookRequest.getAuthor());
+		savedBook.setDescription(bookRequest.getDescription());
+		savedBook.setPrice(bookRequest.getPrice());
+		savedBook.setImage(bookService.saveFileToAWSS3Bucket(bookRequest.getImage()));
+		savedBook.setRating(bookRequest.getRating());
+		savedBook.setAvailable_count(bookRequest.getAvailable_count());
+		savedBook.setCategory(bookRequest.getCategory());
+
+		bookService.saveBook(savedBook);
+		return ResponseEntity.ok("Book saved successfully");
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
-		Optional<Book> book = bookService.getBookById(id);
-		if (book.isPresent()) {
-			Book updatedBook = book.get();
-			updatedBook.setTitle(bookDetails.getTitle());
-			updatedBook.setAuthor(bookDetails.getAuthor());
-			updatedBook.setDescription(bookDetails.getDescription());
-			updatedBook.setPrice(bookDetails.getPrice());
-			updatedBook.setImage(bookDetails.getImage());
-			updatedBook.setRating(bookDetails.getRating());
-			updatedBook.setAvailable_count(bookDetails.getAvailable_count());
-			updatedBook.setCategory(bookDetails.getCategory());
-			return ResponseEntity.ok(bookService.saveBook(updatedBook));
+	public ResponseEntity<String> updateBook(@PathVariable Long id, @ModelAttribute BookRequest bookRequest) {
+		Optional<Book> existingBook = bookService.getBookById(id);
+
+		if (existingBook.isPresent()) {
+			if (bookRequest.getTitle().isEmpty() || bookRequest.getAuthor().isEmpty()
+					|| bookRequest.getDescription().isEmpty() || bookRequest.getPrice() == null
+					|| bookRequest.getImage().isEmpty() || bookRequest.getRating() == null
+					|| bookRequest.getAvailable_count() == null || bookRequest.getCategory().isEmpty()) {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Some fields are empty!");
+			}
+
+			Book updatedBook = existingBook.get();
+			updatedBook.setTitle(bookRequest.getTitle());
+			updatedBook.setAuthor(bookRequest.getAuthor());
+			updatedBook.setDescription(bookRequest.getDescription());
+			updatedBook.setPrice(bookRequest.getPrice());
+			updatedBook.setImage(bookService.saveFileToAWSS3Bucket(bookRequest.getImage()));
+			updatedBook.setRating(bookRequest.getRating());
+			updatedBook.setAvailable_count(bookRequest.getAvailable_count());
+			updatedBook.setCategory(bookRequest.getCategory());
+
+			bookService.saveBook(updatedBook);
+			return ResponseEntity.ok("Book updated successfully");
 		}
 		else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
 		}
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-		bookService.deleteBook(id);
-		return ResponseEntity.noContent().build();
+	public ResponseEntity<String> deleteBook(@PathVariable Long id) {
+		Optional<Book> book = bookService.getBookById(id);
+		if (book.isPresent()) {
+			bookService.deleteBook(id);
+			return ResponseEntity.ok("Book deleted successfully");
+		}
+		else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
+		}
 	}
 
 	@PatchMapping("/{id}")
-	public ResponseEntity<Book> partiallyUpdateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
-		Optional<Book> book = bookService.getBookById(id);
-		if (book.isPresent()) {
-			Book existingBook = book.get();
-			if (bookDetails.getTitle() != null) {
-				existingBook.setTitle(bookDetails.getTitle());
+	public ResponseEntity<String> partiallyUpdateBook(@PathVariable Long id, @ModelAttribute BookRequest bookRequest) {
+		Optional<Book> existingBook = bookService.getBookById(id);
+
+		if (existingBook.isPresent()) {
+			Book bookToUpdate = existingBook.get();
+
+			if (bookRequest.getTitle() != null)
+				bookToUpdate.setTitle(bookRequest.getTitle());
+			if (bookRequest.getAuthor() != null)
+				bookToUpdate.setAuthor(bookRequest.getAuthor());
+			if (bookRequest.getDescription() != null)
+				bookToUpdate.setDescription(bookRequest.getDescription());
+			if (bookRequest.getPrice() != null)
+				bookToUpdate.setPrice(bookRequest.getPrice());
+			if (bookRequest.getRating() != null)
+				bookToUpdate.setRating(bookRequest.getRating());
+			if (bookRequest.getAvailable_count() != null)
+				bookToUpdate.setAvailable_count(bookRequest.getAvailable_count());
+			if (bookRequest.getCategory() != null)
+				bookToUpdate.setCategory(bookRequest.getCategory());
+
+			if (bookRequest.getImage() != null && !bookRequest.getImage().isEmpty()) {
+				String imageUrl = bookService.saveFileToAWSS3Bucket(bookRequest.getImage());
+				bookToUpdate.setImage(imageUrl);
 			}
-			if (bookDetails.getAuthor() != null) {
-				existingBook.setAuthor(bookDetails.getAuthor());
-			}
-			if (bookDetails.getDescription() != null) {
-				existingBook.setDescription(bookDetails.getDescription());
-			}
-			if (bookDetails.getPrice() != null) {
-				existingBook.setPrice(bookDetails.getPrice());
-			}
-			if (bookDetails.getImage() != null) {
-				existingBook.setImage(bookDetails.getImage());
-			}
-			if (bookDetails.getRating() != null) {
-				existingBook.setRating(bookDetails.getRating());
-			}
-			if (bookDetails.getAvailable_count() != null) {
-				existingBook.setAvailable_count(bookDetails.getAvailable_count());
-			}
-			if (bookDetails.getCategory() != null) {
-				existingBook.setCategory(bookDetails.getCategory());
-			}
-			return ResponseEntity.ok(bookService.saveBook(existingBook));
+
+			bookService.saveBook(bookToUpdate);
+			return ResponseEntity.ok("Book partially updated successfully");
 		}
 		else {
-			return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
 		}
 	}
 
