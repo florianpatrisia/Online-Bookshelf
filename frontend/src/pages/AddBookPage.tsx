@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useBookContext } from '../context/BooksContext'
 import { Book } from '../models/Book'
-import MyNavbar from '../components/Navbar/Navbar.tsx'
+import MyNavbar from '../components/Navbar/Navbar'
 
 const AddBookPage: React.FC = () => {
     const { addBook } = useBookContext()
