@@ -1,7 +1,7 @@
-package com.backend.converter;
+package com.backend.Coverter;
 
 import com.backend.Model.Review;
-import com.backend.dto.ReviewDTO;
+import com.backend.DTO.ReviewDTO;
 
 public class ReviewConverter {
 

@@ -1,4 +1,4 @@
-package com.backend.dto;
+package com.backend.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
