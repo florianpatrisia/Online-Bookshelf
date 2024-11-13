@@ -21,13 +21,14 @@ public class User {
 
 	private String password;
 
-	private Boolean is_admin;
+	@Column(name = "is_admin")
+	private Boolean isAdmin;
 
 	private String username;
 
 	@Override
 	public String toString() {
-		return "User{" + "user_id=" + userId + ", email='" + email + '\'' + ", is_admin=" + is_admin + ", username='"
+		return "User{" + "user_id=" + userId + ", email='" + email + '\'' + ", is_admin=" + isAdmin + ", username='"
 				+ username + '\'' + '}';
 	}
 

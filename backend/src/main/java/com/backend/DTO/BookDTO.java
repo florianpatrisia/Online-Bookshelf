@@ -18,7 +18,7 @@ public class BookDTO {
 
 	private Double rating;
 
-	private Integer available_count;
+	private Integer availableCount;
 
 	private String category;
 
