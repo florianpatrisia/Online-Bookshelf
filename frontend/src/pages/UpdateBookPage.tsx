@@ -5,7 +5,7 @@ import { useBookContext } from '../context/BooksContext'
 import MyNavbar from '../components/Navbar/Navbar.tsx'
 
 const UpdateBookPage: React.FC = () => {
-    const { id } = useParams<{ id: number }>()
+    const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
     const { getBookById, updateBook } = useBookContext()
     const [formData, setFormData] = useState<Book | null>(null)

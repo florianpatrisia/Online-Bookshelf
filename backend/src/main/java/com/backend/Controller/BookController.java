@@ -40,10 +40,9 @@ public class BookController {
 
 	@PostMapping
 	public ResponseEntity<String> createBook(@ModelAttribute BookDTO bookDTO) {
-		if (bookDTO.getTitle().isEmpty() || bookDTO.getAuthor().isEmpty()
-				|| bookDTO.getDescription().isEmpty() || bookDTO.getPrice() == null
-				|| bookDTO.getImage().isEmpty() || bookDTO.getRating() == null
-				|| bookDTO.getAvailable_count() == null || bookDTO.getCategory().isEmpty()) {
+		if (bookDTO.getTitle().isEmpty() || bookDTO.getAuthor().isEmpty() || bookDTO.getDescription().isEmpty()
+				|| bookDTO.getPrice() == null || bookDTO.getImage().isEmpty() || bookDTO.getRating() == null
+				|| bookDTO.getAvailableCount() == null || bookDTO.getCategory().isEmpty()) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Some fields are empty!");
 		}
 
@@ -54,7 +53,7 @@ public class BookController {
 		savedBook.setPrice(bookDTO.getPrice());
 		savedBook.setImage(bookService.saveFileToAWSS3Bucket(bookDTO.getImage()));
 		savedBook.setRating(bookDTO.getRating());
-		savedBook.setAvailable_count(bookDTO.getAvailable_count());
+		savedBook.setAvailableCount(bookDTO.getAvailableCount());
 		savedBook.setCategory(bookDTO.getCategory());
 
 		bookService.saveBook(savedBook);
@@ -66,10 +65,9 @@ public class BookController {
 		Optional<Book> existingBook = bookService.getBookById(id);
 
 		if (existingBook.isPresent()) {
-			if (bookDTO.getTitle().isEmpty() || bookDTO.getAuthor().isEmpty()
-					|| bookDTO.getDescription().isEmpty() || bookDTO.getPrice() == null
-					|| bookDTO.getImage().isEmpty() || bookDTO.getRating() == null
-					|| bookDTO.getAvailable_count() == null || bookDTO.getCategory().isEmpty()) {
+			if (bookDTO.getTitle().isEmpty() || bookDTO.getAuthor().isEmpty() || bookDTO.getDescription().isEmpty()
+					|| bookDTO.getPrice() == null || bookDTO.getImage().isEmpty() || bookDTO.getRating() == null
+					|| bookDTO.getAvailableCount() == null || bookDTO.getCategory().isEmpty()) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Some fields are empty!");
 			}
 
@@ -80,7 +78,7 @@ public class BookController {
 			updatedBook.setPrice(bookDTO.getPrice());
 			updatedBook.setImage(bookService.saveFileToAWSS3Bucket(bookDTO.getImage()));
 			updatedBook.setRating(bookDTO.getRating());
-			updatedBook.setAvailable_count(bookDTO.getAvailable_count());
+			updatedBook.setAvailableCount(bookDTO.getAvailableCount());
 			updatedBook.setCategory(bookDTO.getCategory());
 
 			bookService.saveBook(updatedBook);
@@ -120,8 +118,8 @@ public class BookController {
 				bookToUpdate.setPrice(bookDTO.getPrice());
 			if (bookDTO.getRating() != null)
 				bookToUpdate.setRating(bookDTO.getRating());
-			if (bookDTO.getAvailable_count() != null)
-				bookToUpdate.setAvailable_count(bookDTO.getAvailable_count());
+			if (bookDTO.getAvailableCount() != null)
+				bookToUpdate.setAvailableCount(bookDTO.getAvailableCount());
 			if (bookDTO.getCategory() != null)
 				bookToUpdate.setCategory(bookDTO.getCategory());
 

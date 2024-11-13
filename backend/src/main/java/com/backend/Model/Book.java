@@ -29,7 +29,8 @@ public class Book {
 
 	private Double rating;
 
-	private Integer available_count;
+	@Column(name = "available_count")
+	private Integer availableCount;
 
 	private String category;
 
@@ -37,7 +38,7 @@ public class Book {
 	public String toString() {
 		return "Book{" + "title='" + title + '\'' + ", author='" + author + '\'' + ", description='" + description
 				+ '\'' + ", price=" + price + ", image='" + image + '\'' + ", rating=" + rating + ", available_count="
-				+ available_count + ", category='" + category + '\'' + '}';
+				+ availableCount + ", category='" + category + '\'' + '}';
 	}
 
 }
