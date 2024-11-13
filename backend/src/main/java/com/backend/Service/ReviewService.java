@@ -16,72 +16,77 @@ import java.util.Optional;
 @Service
 public class ReviewService {
 
-    private final ReviewRepository reviewRepository;
-    private final BookRepository bookRepository;
-    private final UserRepository userRepository;
+	private final ReviewRepository reviewRepository;
 
+	private final BookRepository bookRepository;
 
-    public ReviewService(ReviewRepository reviewRepository, BookRepository bookRepository, UserRepository userRepository) {
-        this.reviewRepository = reviewRepository;
-        this.bookRepository = bookRepository;
-        this.userRepository = userRepository;
-    }
+	private final UserRepository userRepository;
 
-    public Review saveReview(Long bookId, Long userId, Review review) {
+	public ReviewService(ReviewRepository reviewRepository, BookRepository bookRepository,
+			UserRepository userRepository) {
+		this.reviewRepository = reviewRepository;
+		this.bookRepository = bookRepository;
+		this.userRepository = userRepository;
+	}
 
-        Optional<Book> book = bookRepository.findById(Math.toIntExact(bookId));
-        Optional<User> user = userRepository.findById(userId);
-        if (book.isPresent() && user.isPresent()) {
-            review.setBook(book.get());
-            review.setUser(user.get());
-            return reviewRepository.save(review);
-        } else {
-            throw new ReviewException(HttpStatus.NOT_FOUND, "Book or User not found");
-        }
-    }
+	public Review saveReview(Long bookId, Long userId, Review review) {
 
-    public List<Review> getAllReviews() {
-        return reviewRepository.findAll();
-    }
+		Optional<Book> book = bookRepository.findById(Math.toIntExact(bookId));
+		Optional<User> user = userRepository.findById(userId);
+		if (book.isPresent() && user.isPresent()) {
+			review.setBook(book.get());
+			review.setUser(user.get());
+			return reviewRepository.save(review);
+		}
+		else {
+			throw new ReviewException(HttpStatus.NOT_FOUND, "Book or User not found");
+		}
+	}
 
-    public List<Review> getReviewsByBookId(Long bookId) {
-        return reviewRepository.findByBook_BookId(bookId);
-    }
+	public List<Review> getAllReviews() {
+		return reviewRepository.findAll();
+	}
 
-    public List<Review> getReviewsByUserId(Long userId) {
-        return reviewRepository.findByUser_UserId(userId);
-    }
+	public List<Review> getReviewsByBookId(Long bookId) {
+		return reviewRepository.findByBook_BookId(bookId);
+	}
 
-    public Review getReviewById(Long id) {
-        Optional<Review> review = reviewRepository.findById(id);
-        return review.orElseThrow(() -> new ReviewException(HttpStatus.NOT_FOUND, "Review not found"));
-    }
+	public List<Review> getReviewsByUserId(Long userId) {
+		return reviewRepository.findByUser_UserId(userId);
+	}
 
-    public Review updateReview(Long id, Long bookId, Long userId, Review updatedReview) {
-        Optional<Review> existingReview = reviewRepository.findById(id);
-        if (existingReview.isPresent()) {
-            Review review = existingReview.get();
-            Optional<Book> book = bookRepository.findById(Math.toIntExact(bookId));
-            Optional<User> user = userRepository.findById(userId);
+	public Review getReviewById(Long id) {
+		Optional<Review> review = reviewRepository.findById(id);
+		return review.orElseThrow(() -> new ReviewException(HttpStatus.NOT_FOUND, "Review not found"));
+	}
 
-            if (book.isPresent() && user.isPresent()) {
-                review.setBook(book.get());
-                review.setUser(user.get());
-                review.setDate(updatedReview.getDate());
-                review.setRating(updatedReview.getRating());
-                review.setDescription(updatedReview.getDescription());
-                return reviewRepository.save(review);
-            }
-        }
-        throw new ReviewException(HttpStatus.NOT_FOUND, "Review not found");
-    }
+	public Review updateReview(Long id, Long bookId, Long userId, Review updatedReview) {
+		Optional<Review> existingReview = reviewRepository.findById(id);
+		if (existingReview.isPresent()) {
+			Review review = existingReview.get();
+			Optional<Book> book = bookRepository.findById(Math.toIntExact(bookId));
+			Optional<User> user = userRepository.findById(userId);
 
-    public void deleteReview(Long id) {
-        if (reviewRepository.existsById(id)) {
-            reviewRepository.deleteById(id);
-        } else {
-            throw new ReviewException(HttpStatus.NOT_FOUND, "Review not found");
-        }
+			if (book.isPresent() && user.isPresent()) {
+				review.setBook(book.get());
+				review.setUser(user.get());
+				review.setDate(updatedReview.getDate());
+				review.setRating(updatedReview.getRating());
+				review.setDescription(updatedReview.getDescription());
+				return reviewRepository.save(review);
+			}
+		}
+		throw new ReviewException(HttpStatus.NOT_FOUND, "Review not found");
+	}
 
-    }
+	public void deleteReview(Long id) {
+		if (reviewRepository.existsById(id)) {
+			reviewRepository.deleteById(id);
+		}
+		else {
+			throw new ReviewException(HttpStatus.NOT_FOUND, "Review not found");
+		}
+
+	}
+
 }
