@@ -1,10 +1,10 @@
-package com.backend.RequestModel;
+package com.backend.DTO;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class BookRequest {
+public class BookDTO {
 
 	private String title;
 

@@ -14,20 +14,21 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long user_id;
-
-	private String username;
-
-	private String password;
+	@Column(name = "user_id")
+	private Long userId;
 
 	private String email;
 
+	private String password;
+
 	private Boolean is_admin;
+
+	private String username;
 
 	@Override
 	public String toString() {
-		return "User{" + "username='" + username + '\'' + ", password='" + password + '\'' + ", email='" + email + '\''
-				+ ", is_admin=" + is_admin + '}';
+		return "User{" + "user_id=" + userId + ", email='" + email + '\'' + ", is_admin=" + is_admin + ", username='"
+				+ username + '\'' + '}';
 	}
 
 }
