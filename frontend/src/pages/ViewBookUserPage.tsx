@@ -8,7 +8,7 @@ import { Book } from '../models/Book.ts'
 import MyNavbar from '../components/Navbar/Navbar.tsx'
 
 const BookViewUserPage: React.FC = () => {
-    const { id } = useParams<{ id: number }>()
+    const { id } = useParams<{ id: string }>()
 
     const [book, setBook] = useState<Book | null>(null)
     const [loading, setLoading] = useState<boolean>(true)

@@ -18,9 +18,9 @@ export interface BooksContext {
     books: Book[]
     addBook: (book: Book) => Promise<void>
     setBooks: React.Dispatch<React.SetStateAction<Book[]>>
-    getBookById: (id: number) => Promise<Book | undefined>
-    deleteBook: (id: number) => Promise<void>
-    updateBook: (id: number, updatedBook: Book) => Promise<void>
+    getBookById: (id: string) => Promise<Book | undefined>
+    deleteBook: (id: string) => Promise<void>
+    updateBook: (id: string, updatedBook: Book) => Promise<void>
 }
 
 const initialBooks: Book[] = []
@@ -62,27 +62,27 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
         }
     }
 
-    const updateBook = async (id: number, book: Partial<Book>) => {
+    const updateBook = async (id: string, book: Partial<Book>) => {
         try {
             const updatedBook = await updateBookService(id, book)
             setBooks((prevBooks) =>
-                prevBooks.map((b) => (b._id === id ? updatedBook : b))
+                prevBooks.map((b) => (b.bookId === id ? updatedBook : b))
             )
         } catch (error) {
             console.error('Error updating book:', error)
         }
     }
 
-    const deleteBook = async (id: number) => {
+    const deleteBook = async (id: string) => {
         try {
             await deleteBookService(id)
-            setBooks((prevBooks) => prevBooks.filter((b) => b._id !== id))
+            setBooks((prevBooks) => prevBooks.filter((b) => b.bookId !== id))
         } catch (error) {
             console.error('Error deleting book:', error)
         }
     }
 
-    const getBookById = async (id: number): Promise<Book | undefined> => {
+    const getBookById = async (id: string): Promise<Book | undefined> => {
         try {
             console.log('Context ID ' + id)
             const book = await fetchBookById(id)

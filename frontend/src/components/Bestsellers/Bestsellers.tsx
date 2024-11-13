@@ -23,7 +23,7 @@ const BestsellerBooks: React.FC = () => {
             <h2 className="bestseller-title">Bestseller Books</h2>
             <Row xs={1} md={3} lg={5} className="g-4">
                 {bestSellers.map((book: Book) => (
-                    <Col key={book._id}>
+                    <Col key={book.bookId}>
                         <BookCard book={book} />
                     </Col>
                 ))}

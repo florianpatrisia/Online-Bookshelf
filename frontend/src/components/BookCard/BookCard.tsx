@@ -12,7 +12,7 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
     const navigate = useNavigate()
 
     const handleCardClick = () => {
-        navigate(`/books/${book._id}`)
+        navigate(`/books/${book.bookId}`)
     }
 
     return (

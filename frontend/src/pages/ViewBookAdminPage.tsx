@@ -7,7 +7,7 @@ import { useBookContext } from '../context/BooksContext'
 import MyNavbar from '../components/Navbar/Navbar.tsx'
 
 const BookViewAdminPage: React.FC = () => {
-    const { id } = useParams<{ id: number }>()
+    const { id } = useParams<{ id: string }>()
     const navigate = useNavigate()
     const { getBookById, deleteBook } = useBookContext()
     const [book, setBook] = useState<Book | null>(null)
