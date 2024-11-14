@@ -20,7 +20,11 @@ const BookViewUserPage: React.FC = () => {
                 const bookData = await fetchBookById(id!) // Fetch book data from the API
                 setBook(bookData)
             } catch (error) {
-                setError(error.message || 'Book not found.')
+                if (error instanceof Error) {
+                    setError(error.message)
+                } else {
+                    setError('Book not found.')
+                }
             } finally {
                 setLoading(false)
             }

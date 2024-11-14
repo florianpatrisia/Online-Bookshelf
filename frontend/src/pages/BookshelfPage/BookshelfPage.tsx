@@ -12,7 +12,7 @@ export function BookshelfPage() {
                 <h1 className="mb-4">Bookshelf</h1>
                 <div className="card-grid">
                     {books.map((book) => (
-                        <div className="col-md-4 mb-4" key={book._id}>
+                        <div className="col-md-4 mb-4" key={book.bookId}>
                             <Card book={book} />
                         </div>
                     ))}

@@ -24,7 +24,11 @@ const BookViewAdminPage: React.FC = () => {
                     setBook(bookData)
                 }
             } catch (error) {
-                setError(error.message || 'Book not found.')
+                if (error instanceof Error) {
+                    setError(error.message)
+                } else {
+                    setError('Book not found.')
+                }
             } finally {
                 setLoading(false)
             }
@@ -41,8 +45,11 @@ const BookViewAdminPage: React.FC = () => {
             await deleteBook(id!)
             navigate('/')
         } catch (error) {
-            setError(error)
-            setError('Failed to delete the book.')
+            if (error instanceof Error) {
+                setError(error.message)
+            } else {
+                setError('Failed to delete the book')
+            }
         }
     }
 

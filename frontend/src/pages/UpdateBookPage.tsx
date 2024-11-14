@@ -23,7 +23,11 @@ const UpdateBookPage: React.FC = () => {
                     setLoading(false)
                 }
             } catch (error) {
-                setError(error.message || 'Failed to fetch book')
+                if (error instanceof Error) {
+                    setError(error.message)
+                } else {
+                    setError('Failed to fetch book')
+                }
                 setLoading(false)
             }
         }
