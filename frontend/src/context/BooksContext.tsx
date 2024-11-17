@@ -26,7 +26,7 @@ export interface BooksContext {
 const initialBooks: Book[] = []
 const BooksContext = createContext<BooksContext>({
     books: initialBooks,
-    addBook: async (book: FormData): Promise<void> => {},
+    addBook: async (): Promise<void> => {},
     updateBook: async () => {},
     deleteBook: async () => {},
     setBooks: () => {},
@@ -54,8 +54,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
 
     const addBook = async (book: FormData): Promise<void> => {
         try {
-            console.log('BOOK CONTEXT ', book)
-            const newBook = await createBook(book)
+            await createBook(book)
             const updatedBooks = await fetchBooks()
             setBooks(updatedBooks)
             // setBooks((prevBooks) => [...prevBooks, newBook])
