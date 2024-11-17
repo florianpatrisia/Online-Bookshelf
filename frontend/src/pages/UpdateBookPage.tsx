@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Book } from '../models/Book.ts'
 import { useBookContext } from '../context/BooksContext'
-import MyNavbar from '../components/Navbar/Navbar.tsx'
+import MyNavbar from '../components/NavBar/Navbar.tsx'
 
 const UpdateBookPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()

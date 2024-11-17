@@ -16,7 +16,7 @@ import {
 
 export interface BooksContext {
     books: Book[]
-    addBook: (book: Book) => Promise<void>
+    addBook: (book: FormData) => Promise<void>
     setBooks: React.Dispatch<React.SetStateAction<Book[]>>
     getBookById: (id: string) => Promise<Book | undefined>
     deleteBook: (id: string) => Promise<void>
@@ -26,7 +26,7 @@ export interface BooksContext {
 const initialBooks: Book[] = []
 const BooksContext = createContext<BooksContext>({
     books: initialBooks,
-    addBook: async () => {},
+    addBook: async (): Promise<void> => {},
     updateBook: async () => {},
     deleteBook: async () => {},
     setBooks: () => {},
@@ -52,11 +52,12 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
         loadBooks()
     }, [])
 
-    const addBook = async (book: Book) => {
+    const addBook = async (book: FormData): Promise<void> => {
         try {
-            console.log('BOOK CONTEXT ', book)
-            const newBook = await createBook(book)
-            setBooks((prevBooks) => [...prevBooks, newBook])
+            await createBook(book)
+            const updatedBooks = await fetchBooks()
+            setBooks(updatedBooks)
+            // setBooks((prevBooks) => [...prevBooks, newBook])
         } catch (error) {
             console.error('Error adding book:', error)
         }
