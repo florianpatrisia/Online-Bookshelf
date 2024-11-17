@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { useBookContext } from '../context/BooksContext'
-import { Book } from '../models/Book'
-import MyNavbar from '../components/Navbar/Navbar'
-
+import MyNavbar from '../components/NavBar/Navbar'
+import { useNavigate } from 'react-router-dom'
+import { fetchBooks } from '../services/api'
 const AddBookPage: React.FC = () => {
     const { addBook } = useBookContext()
+    const navigate = useNavigate()
     const [imagePreview, setImagePreview] = useState<string | null>(null)
     const [formData, setFormData] = useState({
         title: '',
@@ -13,8 +14,8 @@ const AddBookPage: React.FC = () => {
         description: '',
         price: 0,
         rating: 0,
-        available_count: 0,
-        image: null as string | null,
+        availableCount: 0,
+        image: null as File | null,
     })
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,7 +26,7 @@ const AddBookPage: React.FC = () => {
                 setImagePreview(reader.result as string)
                 setFormData((prevData) => ({
                     ...prevData,
-                    image: reader.result as string,
+                    image: file,
                 }))
             }
             reader.readAsDataURL(file)
@@ -59,21 +60,25 @@ const AddBookPage: React.FC = () => {
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
 
-        const bookData: Book = {
-            title: formData.title,
-            author: formData.author,
-            category: formData.category,
-            description: formData.description,
-            price: formData.price,
-            rating: formData.rating,
-            availableCount: formData.available_count,
-            image: formData.image,
+        const formDataToSubmit = new FormData()
+        formDataToSubmit.append('title', formData.title)
+        formDataToSubmit.append('author', formData.author)
+        formDataToSubmit.append('category', formData.category)
+        formDataToSubmit.append('description', formData.description)
+        formDataToSubmit.append('price', formData.price.toString())
+        formDataToSubmit.append('rating', formData.rating.toString())
+        formDataToSubmit.append(
+            'availableCount',
+            formData.availableCount.toString()
+        )
+        if (formData.image) {
+            formDataToSubmit.append('image', formData.image)
         }
-
         try {
-            console.log('Form Data:', formData)
-            await addBook(bookData)
-            alert('Book added successfully!')
+            await addBook(formDataToSubmit)
+            await fetchBooks()
+            navigate('/bookshelf')
+            window.location.reload()
         } catch (error) {
             console.error('Error adding book:', error)
         }
@@ -94,6 +99,7 @@ const AddBookPage: React.FC = () => {
                         id="title"
                         name="title"
                         className="form-control"
+                        value={formData.title}
                         onChange={handleInputChange}
                         required
                     />
@@ -108,6 +114,7 @@ const AddBookPage: React.FC = () => {
                         id="author"
                         name="author"
                         className="form-control"
+                        value={formData.author}
                         onChange={handleInputChange}
                         required
                     />
@@ -137,10 +144,11 @@ const AddBookPage: React.FC = () => {
                         id="category"
                         name="category"
                         className="form-select"
+                        value={formData.category}
                         onChange={handleInputChange}
                         required
                     >
-                        <option value="" disabled selected>
+                        <option value="" disabled>
                             Select a category
                         </option>
                         <option value="Fiction">Fiction</option>
@@ -164,7 +172,8 @@ const AddBookPage: React.FC = () => {
                         id="price"
                         name="price"
                         className="form-control"
-                        step="0.1"
+                        min="0"
+                        value={formData.price}
                         onChange={handleInputChange}
                         required
                     />
@@ -178,10 +187,11 @@ const AddBookPage: React.FC = () => {
                         type="number"
                         id="rating"
                         name="rating"
+                        min="0"
+                        max="5"
+                        step="0.1"
                         className="form-control"
-                        step="0.01"
-                        min="0.01"
-                        max="5.0"
+                        value={formData.rating}
                         onChange={handleInputChange}
                         required
                     />
@@ -194,8 +204,9 @@ const AddBookPage: React.FC = () => {
                     <input
                         type="number"
                         id="available_count"
-                        name="available_count"
+                        name="availableCount"
                         className="form-control"
+                        value={formData.availableCount}
                         onChange={handleInputChange}
                         required
                     />
@@ -210,6 +221,7 @@ const AddBookPage: React.FC = () => {
                         id="image_upload"
                         name="image_upload"
                         className="form-control"
+                        // value={formData.image}
                         accept="image/*"
                         onChange={handleImageChange}
                         required
@@ -221,6 +233,7 @@ const AddBookPage: React.FC = () => {
                         <img
                             src={imagePreview}
                             alt="Image preview"
+                            id="image_preview"
                             style={{
                                 display: 'block',
                                 marginTop: '10px',

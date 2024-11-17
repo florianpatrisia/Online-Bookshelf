@@ -4,7 +4,7 @@ import StarRating from '../components/StarRating'
 // import { fetchBookById } from '../services/api' // Import your API functions
 import { Book } from '../models/Book.ts'
 import { useBookContext } from '../context/BooksContext'
-import MyNavbar from '../components/Navbar/Navbar.tsx'
+import MyNavbar from '../components/NavBar/Navbar.tsx'
 
 const BookViewAdminPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()

@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faHeart } from '@fortawesome/free-solid-svg-icons'
 import { fetchBookById } from '../services/api' // Import the function to fetch book data
 import { Book } from '../models/Book.ts'
-import MyNavbar from '../components/Navbar/Navbar.tsx'
+import MyNavbar from '../components/NavBar/Navbar.tsx'
 
 const BookViewUserPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()

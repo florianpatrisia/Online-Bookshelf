@@ -28,19 +28,21 @@ export const fetchBooks = async (): Promise<Book[]> => {
     return data
 }
 
-export const createBook = async (book: Book): Promise<Book> => {
+export const createBook = async (book: FormData): Promise<Book> => {
     console.log('Book din API ', book)
     const response = await fetch(`${API_BASE_URL}/api/books`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(book),
+        body: book,
     })
     if (!response.ok) {
         throw new Error('Failed to create book')
+        // const errorText = await response.text()
+        // throw new Error(`Failed to create book: ${errorText}`)
     }
-    return await response.json()
+    const newBook = await response.json()
+    console.log(newBook)
+
+    return newBook
 }
 
 export const updateBookService = async (
