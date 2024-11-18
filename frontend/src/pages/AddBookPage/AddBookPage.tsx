@@ -1,12 +1,15 @@
 import React, { useState } from 'react'
-import { useBookContext } from '../context/BooksContext'
-import MyNavbar from '../components/NavBar/Navbar'
+import { useBookContext } from '../../context/BooksContext.tsx'
+import MyNavbar from '../../components/Navbar/Navbar.tsx'
 import { useNavigate } from 'react-router-dom'
-import { fetchBooks } from '../services/api'
+import './AddBookPage.css'
+
 const AddBookPage: React.FC = () => {
     const { addBook } = useBookContext()
     const navigate = useNavigate()
     const [imagePreview, setImagePreview] = useState<string | null>(null)
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
     const [formData, setFormData] = useState({
         title: '',
         author: '',
@@ -22,23 +25,11 @@ const AddBookPage: React.FC = () => {
         const file = event.target.files?.[0]
         if (file) {
             const reader = new FileReader()
-            reader.onloadend = () => {
-                setImagePreview(reader.result as string)
-                setFormData((prevData) => ({
-                    ...prevData,
-                    image: file,
-                }))
-            }
+            reader.onloadend = () => setImagePreview(reader.result as string)
+            reader.onerror = () => setError('Failed to load image preview')
             reader.readAsDataURL(file)
-        }
-    }
 
-    const handleDescriptionChange = (
-        event: React.ChangeEvent<HTMLTextAreaElement>
-    ) => {
-        const value = event.target.value
-        if (value.length <= 800) {
-            setFormData((prevData) => ({ ...prevData, description: value }))
+            setFormData((prevData) => ({ ...prevData, image: file }))
         }
     }
 
@@ -51,43 +42,52 @@ const AddBookPage: React.FC = () => {
             [name]:
                 name === 'price' ||
                 name === 'rating' ||
-                name === 'available_count'
+                name === 'availableCount'
                     ? Number(value)
                     : value,
         }))
     }
 
+    const handleDescriptionChange = (
+        event: React.ChangeEvent<HTMLTextAreaElement>
+    ) => {
+        const value = event.target.value
+        if (value.length <= 800) {
+            setFormData((prevData) => ({ ...prevData, description: value }))
+        }
+    }
+
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
+        setLoading(true)
+        setError(null)
 
         const formDataToSubmit = new FormData()
-        formDataToSubmit.append('title', formData.title)
-        formDataToSubmit.append('author', formData.author)
-        formDataToSubmit.append('category', formData.category)
-        formDataToSubmit.append('description', formData.description)
-        formDataToSubmit.append('price', formData.price.toString())
-        formDataToSubmit.append('rating', formData.rating.toString())
-        formDataToSubmit.append(
-            'availableCount',
-            formData.availableCount.toString()
-        )
-        if (formData.image) {
-            formDataToSubmit.append('image', formData.image)
-        }
+        Object.entries(formData).forEach(([key, value]) => {
+            if (key === 'image' && value instanceof File) {
+                formDataToSubmit.append(key, value)
+            } else {
+                formDataToSubmit.append(key, String(value))
+            }
+        })
+
         try {
             await addBook(formDataToSubmit)
-            await fetchBooks()
             navigate('/bookshelf')
-            window.location.reload()
         } catch (error) {
-            console.error('Error adding book:', error)
+            if (error instanceof Error) {
+                setError(error.message)
+            } else {
+                setError('Failed to fetch book')
+            }
+        } finally {
+            setLoading(false)
         }
     }
 
     return (
         <div className="container mt-5">
             <MyNavbar />
-            <br></br>
             <h2 className="mb-4">Add a New Book</h2>
             <form id="bookForm" onSubmit={handleSubmit}>
                 <div className="mb-3">
@@ -104,7 +104,6 @@ const AddBookPage: React.FC = () => {
                         required
                     />
                 </div>
-
                 <div className="mb-3">
                     <label htmlFor="author" className="form-label">
                         Author:
@@ -119,7 +118,6 @@ const AddBookPage: React.FC = () => {
                         required
                     />
                 </div>
-
                 <div className="mb-3">
                     <label htmlFor="description" className="form-label">
                         Description:
@@ -128,14 +126,15 @@ const AddBookPage: React.FC = () => {
                         id="description"
                         name="description"
                         className="form-control"
-                        placeholder="Enter a brief description"
+                        maxLength={800}
                         value={formData.description}
                         onChange={handleDescriptionChange}
                         required
-                    ></textarea>
-                    {/*<small>{description.length} / 800 characters</small>*/}
+                    />
+                    <small className="form-text text-muted">
+                        {formData.description.length}/800 characters
+                    </small>
                 </div>
-
                 <div className="mb-3">
                     <label htmlFor="category" className="form-label">
                         Category:
@@ -162,23 +161,21 @@ const AddBookPage: React.FC = () => {
                         <option value="Horror">Horror</option>
                     </select>
                 </div>
-
                 <div className="mb-3">
                     <label htmlFor="price" className="form-label">
                         Price:
                     </label>
                     <input
-                        type="number"
+                        type="text"
                         id="price"
                         name="price"
                         className="form-control"
-                        min="0"
                         value={formData.price}
                         onChange={handleInputChange}
+                        min="0"
                         required
                     />
                 </div>
-
                 <div className="mb-3">
                     <label htmlFor="rating" className="form-label">
                         Rating:
@@ -187,65 +184,62 @@ const AddBookPage: React.FC = () => {
                         type="number"
                         id="rating"
                         name="rating"
-                        min="0"
-                        max="5"
-                        step="0.1"
                         className="form-control"
                         value={formData.rating}
                         onChange={handleInputChange}
+                        min="0"
+                        max="5"
+                        step={0.5}
                         required
                     />
                 </div>
-
                 <div className="mb-3">
-                    <label htmlFor="available_count" className="form-label">
+                    <label htmlFor="availableCount" className="form-label">
                         Available Count:
                     </label>
                     <input
-                        type="number"
-                        id="available_count"
+                        type="text"
+                        id="availableCount"
                         name="availableCount"
                         className="form-control"
                         value={formData.availableCount}
                         onChange={handleInputChange}
+                        min="0"
                         required
                     />
                 </div>
-
                 <div className="mb-3">
-                    <label htmlFor="image_upload" className="form-label">
-                        Upload Image:
+                    <label htmlFor="image" className="form-label">
+                        Image:
                     </label>
                     <input
                         type="file"
-                        id="image_upload"
-                        name="image_upload"
+                        id="image"
+                        name="image"
                         className="form-control"
-                        // value={formData.image}
                         accept="image/*"
                         onChange={handleImageChange}
                         required
                     />
-                </div>
-
-                {imagePreview && (
-                    <div className="mb-3">
+                    {imagePreview && (
                         <img
                             src={imagePreview}
-                            alt="Image preview"
-                            id="image_preview"
-                            style={{
-                                display: 'block',
-                                marginTop: '10px',
-                                maxWidth: '100%',
-                            }}
+                            alt="Preview"
+                            className="img-thumbnail mt-2"
+                            style={{ maxWidth: '150px' }}
                         />
-                    </div>
-                )}
-
-                <button type="submit" className="btn btn-primary">
-                    Add this book
+                    )}
+                </div>
+                <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={loading}
+                >
+                    {loading ? 'Saving...' : 'Add Book'}
                 </button>
+                {error && (
+                    <div className="alert alert-danger mt-3">{error}</div>
+                )}
             </form>
         </div>
     )

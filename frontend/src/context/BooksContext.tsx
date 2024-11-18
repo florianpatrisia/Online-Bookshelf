@@ -7,7 +7,7 @@ import React, {
 } from 'react'
 import { Book } from '../models/Book'
 import {
-    createBook,
+    addBookService,
     deleteBookService,
     fetchBookById,
     fetchBooks,
@@ -20,20 +20,20 @@ export interface BooksContext {
     setBooks: React.Dispatch<React.SetStateAction<Book[]>>
     getBookById: (id: string) => Promise<Book | undefined>
     deleteBook: (id: string) => Promise<void>
-    updateBook: (id: string, updatedBook: Book) => Promise<void>
+    updateBook: (id: string, updatedBook: FormData) => Promise<void>
 }
 
 const initialBooks: Book[] = []
-const BooksContext = createContext<BooksContext>({
-    books: initialBooks,
-    addBook: async (): Promise<void> => {},
-    updateBook: async () => {},
-    deleteBook: async () => {},
-    setBooks: () => {},
-    getBookById: async () => undefined,
-})
 
-export const useBookContext = () => useContext(BooksContext)
+const BooksContext = createContext<BooksContext | undefined>(undefined)
+
+export const useBookContext = (): BooksContext => {
+    const context = useContext(BooksContext)
+    if (!context) {
+        throw new Error('useBookContext must be used within a BookProvider')
+    }
+    return context
+}
 
 export const BookProvider: React.FC<{ children: ReactNode }> = ({
     children,
@@ -54,41 +54,39 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
 
     const addBook = async (book: FormData): Promise<void> => {
         try {
-            await createBook(book)
+            await addBookService(book)
             const updatedBooks = await fetchBooks()
             setBooks(updatedBooks)
-            // setBooks((prevBooks) => [...prevBooks, newBook])
         } catch (error) {
             console.error('Error adding book:', error)
         }
     }
 
-    const updateBook = async (id: string, book: Partial<Book>) => {
+    const updateBook = async (id: string, book: FormData): Promise<void> => {
         try {
-            const updatedBook = await updateBookService(id, book)
-            setBooks((prevBooks) =>
-                prevBooks.map((b) => (b.bookId === id ? updatedBook : b))
-            )
+            await updateBookService(id, book)
+            const fetchedBooks = await fetchBooks()
+            setBooks(fetchedBooks)
         } catch (error) {
             console.error('Error updating book:', error)
         }
     }
 
-    const deleteBook = async (id: string) => {
+    const deleteBook = async (id: string): Promise<void> => {
+        const prevBooks = [...books]
+        setBooks((prevBooks) => prevBooks.filter((b) => b.bookId != id))
+
         try {
             await deleteBookService(id)
-            setBooks((prevBooks) => prevBooks.filter((b) => b.bookId !== id))
         } catch (error) {
             console.error('Error deleting book:', error)
+            setBooks(prevBooks)
         }
     }
 
     const getBookById = async (id: string): Promise<Book | undefined> => {
         try {
-            console.log('Context ID ' + id)
-            const book = await fetchBookById(id)
-            console.log('Titlee ' + book.title)
-            return book
+            return await fetchBookById(id)
         } catch (error) {
             console.error('Error fetching book by ID:', error)
             return undefined

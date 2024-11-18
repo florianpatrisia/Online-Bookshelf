@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import StarRating from '../components/StarRating'
-// import { fetchBookById } from '../services/api' // Import your API functions
-import { Book } from '../models/Book.ts'
-import { useBookContext } from '../context/BooksContext'
-import MyNavbar from '../components/NavBar/Navbar.tsx'
+import StarRating from '../../components/StarRating/StarRating.tsx'
+import { Book } from '../../models/Book.ts'
+import { useBookContext } from '../../context/BooksContext.tsx'
+import MyNavbar from '../../components/Navbar/Navbar.tsx'
+import './ViewBookAdminPage.css'
 
 const BookViewAdminPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()
@@ -43,7 +43,7 @@ const BookViewAdminPage: React.FC = () => {
     const handleDeleteClick = async () => {
         try {
             await deleteBook(id!)
-            navigate('/')
+            navigate('/bookshelf')
         } catch (error) {
             if (error instanceof Error) {
                 setError(error.message)
@@ -68,47 +68,23 @@ const BookViewAdminPage: React.FC = () => {
     return (
         <div className="container mt-5">
             <MyNavbar />
-            <br></br>
-            <br></br>
-            <br></br>
+            <br />
             <div className="row">
-                {/* First column - Image */}
                 <div className="col-md-4">
                     <img
                         src={book!.image || undefined}
                         alt={book!.title}
                         className="img-fluid"
-                        style={{
-                            maxWidth: '100%',
-                            height: 'auto',
-                            width: '300px',
-                            borderRadius: '8px',
-                        }}
                     />
                 </div>
 
-                {/* Second column - Title, Author, and Description */}
                 <div className="col-md-4">
-                    <h2 style={{ textAlign: 'left', marginBottom: '0.2rem' }}>
-                        {book!.title}
-                    </h2>
-                    <h5
-                        style={{
-                            textAlign: 'left',
-                            marginTop: '0',
-                            marginBottom: '1.5rem',
-                            color: 'gray',
-                        }}
-                    >
-                        {book!.author}
-                    </h5>
-                    <p style={{ textAlign: 'left', lineHeight: '1.5' }}>
-                        {book!.description}
-                    </p>
+                    <h2 className="title">{book!.title}</h2>
+                    <h5 className="author">{book!.author}</h5>
+                    <p className="description">{book!.description}</p>
                 </div>
 
-                {/* Third column - Additional Information */}
-                <div className="col-md-4 d-flex flex-column justify-content-center align-items-center">
+                <div className="col-md-4 additional-info">
                     <p>
                         <strong>Category:</strong> {book!.category}
                     </p>
@@ -124,13 +100,13 @@ const BookViewAdminPage: React.FC = () => {
                         <strong>Available Count:</strong> {book!.availableCount}
                     </p>
                     <button
-                        className="btn btn-primary mt-3"
+                        className="btn btn-primary"
                         onClick={handleUpdateClick}
                     >
                         Update this Book
                     </button>
                     <button
-                        className="btn btn-primary mt-3"
+                        className="btn btn-primary"
                         onClick={handleDeleteClick}
                     >
                         Delete this Book
