@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Navbar, Nav, Form, FormControl } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import './navbar.css'
+import './Navbar.css'
 import { FaSearch } from 'react-icons/fa'
 
 const MyNavbar: React.FC = () => {

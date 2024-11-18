@@ -1,0 +1,31 @@
+.star-container {
+    position: relative;
+    display: inline-block;
+    color: #dddddd;
+    cursor: default;
+}
+
+.star-container.clickable {
+    cursor: pointer;
+}
+
+.star {
+    font-size: inherit;
+}
+
+.star-full {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    color: #ffd700;
+}
+
+.star-half {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 50%;
+    color: #ffd700;
+    overflow: hidden;
+}

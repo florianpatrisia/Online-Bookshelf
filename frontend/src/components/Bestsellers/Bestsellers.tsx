@@ -2,8 +2,8 @@ import React from 'react'
 import { useBookContext } from '../../context/BooksContext.tsx'
 import { Row, Col } from 'react-bootstrap'
 import { Book } from '../../models/Book.ts'
-import BookCard from '../BookCard/BookCard.tsx'
-import './bestsellers.css'
+import BookCard from '../Card/Card.tsx'
+import './Bestsellers.css'
 
 const BestsellerBooks: React.FC = () => {
     const { books } = useBookContext()
@@ -13,10 +13,6 @@ const BestsellerBooks: React.FC = () => {
     if (!books || books.length === 0) {
         return <div>Loading...</div>
     }
-
-    console.log('Books:', books)
-
-    console.log(bestSellers[0])
 
     return (
         <div>
