@@ -13,19 +13,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class AuthController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+	private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    private final TokenService tokenService;
-    private final AuthenticationManager authenticationManager;
+	private final TokenService tokenService;
 
-    public AuthController(TokenService tokenService, AuthenticationManager authenticationManager) {
-        this.tokenService = tokenService;
-        this.authenticationManager = authenticationManager;
-    }
+	private final AuthenticationManager authenticationManager;
 
-    @PostMapping("/api/auth/token")
-    public String generateToken(@RequestBody LoginRequest userLogin) {
-        var authentication =  authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLogin.username(), userLogin.password()));
-        return tokenService.generateToken(authentication);
-    }
+	public AuthController(TokenService tokenService, AuthenticationManager authenticationManager) {
+		this.tokenService = tokenService;
+		this.authenticationManager = authenticationManager;
+	}
+
+	@PostMapping("/api/auth/token")
+	public String generateToken(@RequestBody LoginRequest userLogin) {
+		var authentication = authenticationManager
+			.authenticate(new UsernamePasswordAuthenticationToken(userLogin.username(), userLogin.password()));
+		return tokenService.generateToken(authentication);
+	}
+
 }
