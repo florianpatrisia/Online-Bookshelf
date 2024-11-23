@@ -2,7 +2,7 @@ import { useBookContext } from '../../context/BooksContext'
 import '../../utils/reset.css'
 import Card from '../../components/Card/Card'
 import './BookshelfPage.css'
-import MyNavbar from '../../components/Navbar/Navbar'
+import MyNavbar from '../../components/NavBar/Navbar'
 import { Link } from 'react-router-dom'
 
 export function BookshelfPage() {

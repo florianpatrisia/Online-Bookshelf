@@ -96,3 +96,10 @@
 .custom-nav:first-child {
     margin-left: 50px; /* Add more space between the links */
 }
+.nav-link:hover,
+.nav-link:focus,
+.nav-link:active {
+    background-color: var(--color-button-primary);
+    color: white;
+    border-radius: 0.2rem;
+}
