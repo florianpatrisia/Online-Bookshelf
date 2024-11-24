@@ -1,0 +1,48 @@
+.logo {
+    height: 300px;
+    width: auto;
+}
+.container-into {
+    width: 800px;
+    margin-left: 17%;
+    .banner-welcoming {
+        font-size: 30px;
+        font-weight: bold;
+        color: var(--color-button-primary);
+    }
+    .banner-info {
+        text-align: justify;
+        font-size: 20px;
+        font-weight: normal;
+        color: var(--color-button-primary);
+    }
+}
+
+.container-register,
+.btn-register,
+.container-login,
+.btn-login {
+    width: 400px;
+    margin-left: 25%;
+    font-size: 20px;
+}
+
+.btn-register {
+    background-color: var(--color-button-primary);
+    margin-top: 25px;
+    border: none;
+    border-radius: 0.1rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    color: var(--color-background-primary);
+}
+
+.btn-login {
+    margin-top: 10px;
+    background-color: var(--color-background-primary);
+    border-color: var(--color-button-primary);
+    border-radius: 0.1rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+    color: var(--color-button-primary);
+}

@@ -1,0 +1,33 @@
+.form-register {
+    margin-top: 8%;
+    margin-left: 30%;
+    height: 500px;
+    width: 500px;
+    border: 0.2rem solid;
+
+    border-color: var(--color-button-primary);
+    border-radius: 0.1rem;
+}
+.legend {
+    margin-top: 2.5rem;
+    font-size: var(--size-font-s);
+    font-weight: bold;
+    color: var(--color-button-primary);
+}
+.input-username,
+.input-email,
+.input-password {
+    margin-top: 4rem;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    width: 300px;
+}
+.btn-create {
+    margin-top: 4rem;
+    border: none;
+    border-radius: 0.1rem;
+    padding: 0.5rem;
+    background-color: var(--color-button-primary);
+    color: var(--color-background-primary);
+}

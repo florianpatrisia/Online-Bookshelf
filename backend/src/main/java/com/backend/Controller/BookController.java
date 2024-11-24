@@ -27,12 +27,9 @@ public class BookController {
 	@GetMapping
 	public ResponseEntity<List<BookDTO>> getAllBooks() {
 		List<Book> books = bookService.getAllBooks();
-		List<BookDTO> bookDTOs = books.stream()
-				.map(BookConverter::to)
-				.toList();
+		List<BookDTO> bookDTOs = books.stream().map(BookConverter::to).toList();
 		return ResponseEntity.ok(bookDTOs);
 	}
-
 
 	@GetMapping("/{id}")
 	public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
@@ -41,7 +38,8 @@ public class BookController {
 		if (book.isPresent()) {
 			BookDTO bookDTO = BookConverter.to(book.get());
 			return ResponseEntity.ok(bookDTO);
-		} else {
+		}
+		else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 		}
 	}
@@ -61,15 +59,14 @@ public class BookController {
 		return ResponseEntity.ok("Book saved successfully");
 	}
 
-
 	@PutMapping("/{id}")
 	public ResponseEntity<String> updateBook(@PathVariable Long id, @ModelAttribute BookDTO bookDTO) {
 		Optional<Book> existingBook = bookService.getBookById(id);
 
 		if (existingBook.isPresent()) {
 			if (bookDTO.getTitle().isEmpty() || bookDTO.getAuthor().isEmpty() || bookDTO.getDescription().isEmpty()
-					|| bookDTO.getPrice() == null || bookDTO.getRating() == null
-					|| bookDTO.getAvailableCount() == null || bookDTO.getCategory().isEmpty()) {
+					|| bookDTO.getPrice() == null || bookDTO.getRating() == null || bookDTO.getAvailableCount() == null
+					|| bookDTO.getCategory().isEmpty()) {
 				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Some fields are empty!");
 			}
 
@@ -83,11 +80,11 @@ public class BookController {
 			bookService.saveBook(updatedBook);
 
 			return ResponseEntity.ok("Book updated successfully");
-		} else {
+		}
+		else {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
 		}
 	}
-
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteBook(@PathVariable Long id) {
