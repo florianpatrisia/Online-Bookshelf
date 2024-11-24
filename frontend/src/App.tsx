@@ -9,6 +9,7 @@ import React from 'react'
 import { BookshelfPage } from './pages/BookshelfPage/BookshelfPage.tsx'
 import { StartPage } from './pages/StartPage/StartPage.tsx'
 import { RegisterPage } from './pages/RegisterPage/RegisterPage.tsx'
+import { LoginPage } from './pages/LoginPage/LoginPage.tsx'
 
 const App: React.FC = () => {
     return (
@@ -17,6 +18,7 @@ const App: React.FC = () => {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/pageTurner" element={<StartPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/add-book" element={<AddBookPage />} />
                 <Route path="/books/:id" element={<BookViewAdminPage />} />
                 <Route path="/edit-book/:id" element={<UpdateBookPage />} />
