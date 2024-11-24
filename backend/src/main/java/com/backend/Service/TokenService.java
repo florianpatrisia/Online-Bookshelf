@@ -16,29 +16,29 @@ import java.util.stream.Collectors;
 @Service
 public class TokenService {
 
-    private final JwtEncoder encoder;
+	private final JwtEncoder encoder;
 
-    public TokenService(JwtEncoder encoder) {
-        this.encoder = encoder;
-    }
+	public TokenService(JwtEncoder encoder) {
+		this.encoder = encoder;
+	}
 
-    public TokenResponse generateToken(Authentication authentication) {
-        Instant now = Instant.now();
+	public TokenResponse generateToken(Authentication authentication) {
+		Instant now = Instant.now();
 
-        List<String> roles = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+		List<String> roles = authentication.getAuthorities()
+			.stream()
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.toList());
 
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.HOURS))
-                .subject(authentication.getName())
-                .claim("roles", roles)
-                .build();
+		JwtClaimsSet claims = JwtClaimsSet.builder()
+			.issuer("self")
+			.issuedAt(now)
+			.expiresAt(now.plus(1, ChronoUnit.HOURS))
+			.subject(authentication.getName())
+			.claim("roles", roles)
+			.build();
 
-        return new TokenResponse(this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
-    }
-
+		return new TokenResponse(this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
+	}
 
 }
