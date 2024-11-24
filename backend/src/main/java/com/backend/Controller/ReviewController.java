@@ -13,7 +13,7 @@ import java.util.List;
 
 @CrossOrigin("http://localhost:3000")
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/api")
 public class ReviewController {
 
 	private final ReviewService reviewService;
@@ -22,14 +22,14 @@ public class ReviewController {
 		this.reviewService = reviewService;
 	}
 
-	@GetMapping
+	@GetMapping("/users/reviews")
 	public ResponseEntity<List<ReviewDTO>> getAllReviews() {
 		List<Review> reviews = reviewService.getAllReviews();
 		List<ReviewDTO> reviewDTOs = reviews.stream().map(ReviewConverter::to).toList();
 		return ResponseEntity.ok(reviewDTOs);
 	}
 
-	@GetMapping("/book/{bookId}")
+	@GetMapping("/users/reviews/book/{bookId}")
 	public ResponseEntity<List<ReviewDTO>> getReviewsByBookId(@PathVariable Long bookId) {
 		List<Review> reviews = reviewService.getReviewsByBookId(bookId);
 		if (reviews.isEmpty()) {
@@ -39,7 +39,7 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewDTOs);
 	}
 
-	@GetMapping("/user/{userId}")
+	@GetMapping("/users/reviews/user/{userId}")
 	public ResponseEntity<List<ReviewDTO>> getReviewsByUserId(@PathVariable Long userId) {
 		List<Review> reviews = reviewService.getReviewsByUserId(userId);
 		if (reviews.isEmpty()) {
@@ -49,7 +49,7 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewDTOs);
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping("/users/reviews/{id}")
 	public ResponseEntity<ReviewDTO> getReviewById(@PathVariable Long id) {
 		Review review = reviewService.getReviewById(id);
 		if (review == null) {
@@ -59,7 +59,7 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewDTO);
 	}
 
-	@PostMapping
+	@PostMapping("/users/reviews")
 	public ResponseEntity<ReviewDTO> createReview(@RequestBody ReviewDTO reviewDto) {
 		Review review = ReviewConverter.from(reviewDto);
 		Review savedReview = reviewService.saveReview(reviewDto.getBookId(), reviewDto.getUserId(), review);
@@ -67,7 +67,7 @@ public class ReviewController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(reviewDTO);
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/users/reviews/{id}")
 	public ResponseEntity<ReviewDTO> updateReview(@PathVariable Long id, @RequestBody ReviewDTO reviewDto) {
 		if (!id.equals(reviewDto.getReviewId())) {
 			throw new ReviewException(HttpStatus.BAD_REQUEST, "Review ID in path and request body do not match");
@@ -78,7 +78,7 @@ public class ReviewController {
 		return ResponseEntity.ok(reviewDTO);
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/users/reviews/{id}")
 	public ResponseEntity<Void> deleteReview(@PathVariable Long id) {
 		reviewService.deleteReview(id);
 		return ResponseEntity.ok().build();
