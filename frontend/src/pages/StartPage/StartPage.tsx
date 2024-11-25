@@ -27,7 +27,11 @@ export function StartPage() {
                 </button>
             </div>
             <div className="container-login">
-                <button type="button" className="btn-login">
+                <button
+                    type="button"
+                    className="btn-login"
+                    onClick={() => navigate('/login')}
+                >
                     Login
                 </button>
             </div>

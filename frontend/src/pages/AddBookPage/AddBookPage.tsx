@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useBookContext } from '../../context/BooksContext.tsx'
-import MyNavbar from '../../components/NavBar/Navbar.tsx'
+import MyNavbar from '../../components/Navbar/Navbar.tsx'
 import { useNavigate } from 'react-router-dom'
 import './AddBookPage.css'
 
