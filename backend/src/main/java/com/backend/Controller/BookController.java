@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @CrossOrigin("http://localhost:3000")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/books")
 public class BookController {
 
 	private final BookService bookService;
@@ -22,14 +22,14 @@ public class BookController {
 		this.bookService = bookService;
 	}
 
-	@GetMapping("/users/books")
+	@GetMapping
 	public ResponseEntity<List<BookDTO>> getAllBooks() {
 		List<Book> books = bookService.getAllBooks();
 		List<BookDTO> bookDTOs = books.stream().map(BookConverter::to).toList();
 		return ResponseEntity.ok(bookDTOs);
 	}
 
-	@GetMapping("/users/books/{id}")
+	@GetMapping("/{id}")
 	public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
 		Optional<Book> book = bookService.getBookById(id);
 
@@ -42,7 +42,7 @@ public class BookController {
 		}
 	}
 
-	@PostMapping("/admin/books")
+	@PostMapping("/admin")
 	public ResponseEntity<String> createBook(@ModelAttribute BookDTO bookDTO) {
 		if (bookDTO.getTitle().isEmpty() || bookDTO.getAuthor().isEmpty() || bookDTO.getDescription().isEmpty()
 				|| bookDTO.getPrice() == null || bookDTO.getImage().isEmpty() || bookDTO.getRating() == null
@@ -57,7 +57,7 @@ public class BookController {
 		return ResponseEntity.ok("Book saved successfully");
 	}
 
-	@PutMapping("/admin/books/{id}")
+	@PutMapping("/admin/{id}")
 	public ResponseEntity<String> updateBook(@PathVariable Long id, @ModelAttribute BookDTO bookDTO) {
 		Optional<Book> existingBook = bookService.getBookById(id);
 
@@ -84,7 +84,7 @@ public class BookController {
 		}
 	}
 
-	@DeleteMapping("/admin/books/{id}")
+	@DeleteMapping("/admin/{id}")
 	public ResponseEntity<String> deleteBook(@PathVariable Long id) {
 		Optional<Book> book = bookService.getBookById(id);
 		if (book.isPresent()) {

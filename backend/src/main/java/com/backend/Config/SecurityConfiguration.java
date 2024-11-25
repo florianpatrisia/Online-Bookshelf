@@ -9,6 +9,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -26,6 +27,8 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+
+import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -67,9 +70,13 @@ public class SecurityConfiguration {
 		return http.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
 				.permitAll()
-				.requestMatchers("/api/user/**")
-				.hasAnyRole("ADMIN", "USER")
-				.requestMatchers("/api/admin/**")
+				.requestMatchers(antMatcher(HttpMethod.GET, "/api/books/**")).permitAll()
+				.requestMatchers(antMatcher(HttpMethod.GET, "/api/reviews/**")).permitAll()
+				.requestMatchers(antMatcher(HttpMethod.POST, "/api/reviews/**")).hasAnyRole("USER", "ADMIN")
+				.requestMatchers(antMatcher(HttpMethod.PUT, "/api/reviews/**")).hasAnyRole("USER", "ADMIN")
+				.requestMatchers("/api/books/admin/**")
+				.hasRole("ADMIN")
+				.requestMatchers("/api/reviews/admin/**")
 				.hasRole("ADMIN")
 				.anyRequest()
 				.authenticated())
