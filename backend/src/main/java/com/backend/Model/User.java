@@ -17,6 +17,7 @@ public class User {
 	@Column(name = "user_id")
 	private Long userId;
 
+	@Column(unique = true)
 	private String email;
 
 	private String password;
@@ -24,6 +25,7 @@ public class User {
 	@Column(name = "is_admin")
 	private Boolean isAdmin;
 
+	@Column(unique = true)
 	private String username;
 
 	@Override

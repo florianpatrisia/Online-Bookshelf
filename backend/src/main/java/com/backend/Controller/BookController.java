@@ -4,8 +4,6 @@ import com.backend.Coverter.BookConverter;
 import com.backend.Model.Book;
 import com.backend.DTO.BookDTO;
 import com.backend.Service.BookService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +42,7 @@ public class BookController {
 		}
 	}
 
-	@PostMapping
+	@PostMapping("/admin")
 	public ResponseEntity<String> createBook(@ModelAttribute BookDTO bookDTO) {
 		if (bookDTO.getTitle().isEmpty() || bookDTO.getAuthor().isEmpty() || bookDTO.getDescription().isEmpty()
 				|| bookDTO.getPrice() == null || bookDTO.getImage().isEmpty() || bookDTO.getRating() == null
@@ -59,7 +57,7 @@ public class BookController {
 		return ResponseEntity.ok("Book saved successfully");
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/admin/{id}")
 	public ResponseEntity<String> updateBook(@PathVariable Long id, @ModelAttribute BookDTO bookDTO) {
 		Optional<Book> existingBook = bookService.getBookById(id);
 
@@ -86,7 +84,7 @@ public class BookController {
 		}
 	}
 
-	@DeleteMapping("/{id}")
+	@DeleteMapping("/admin/{id}")
 	public ResponseEntity<String> deleteBook(@PathVariable Long id) {
 		Optional<Book> book = bookService.getBookById(id);
 		if (book.isPresent()) {
