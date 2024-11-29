@@ -8,9 +8,7 @@ should be white
     padding-left: 40px;
     padding-right: 50px;
     z-index: 1000;
-    background-color: var(
-        --color-background-secondary
-    );
+    background-color: var(--color-background-secondary);
     opacity: 1;
 }
 
@@ -55,9 +53,7 @@ should be white
     }
 
     .custom-navbar {
-        background-color: var(
-            --color-background-secondary
-        ) !important;
+        background-color: var(--color-background-secondary) !important;
         opacity: 1 !important;
     }
 
@@ -70,9 +66,7 @@ should be white
     }
 
     .navbar-toggler {
-        background-color: var(
-            --color-background-secondary
-        );
+        background-color: var(--color-background-secondary);
         opacity: 1;
         border: none;
     }
