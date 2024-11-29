@@ -43,18 +43,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     const navigate = useNavigate()
 
     const login = async (username: string, password: string) => {
-        try {
-            const response = await loginService(username, password)
-            localStorage.setItem('token', response.token)
-            setToken(response.token)
-            const decoded = JSON.parse(atob(response.token.split('.')[1]))
-            const isAdmin = decoded.roles.includes('ROLE_ADMIN')
-            setUser({ isAdmin })
-            console.log(JSON.parse(atob(response.token.split('.')[1])))
-            navigate('/')
-        } catch (error) {
-            console.error('Login failed: ', error)
-        }
+        const response = await loginService(username, password)
+        localStorage.setItem('token', response.token)
+        setToken(response.token)
+        const decoded = JSON.parse(atob(response.token.split('.')[1]))
+        const isAdmin = decoded.roles.includes('ROLE_ADMIN')
+        setUser({ isAdmin })
+        console.log(JSON.parse(atob(response.token.split('.')[1])))
+        navigate('/')
     }
 
     const signup = async (userData: {
@@ -62,13 +58,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         email: string
         password: string
     }) => {
-        try {
-            const userWithAdminFlag = { ...userData, isAdmin: false }
-            await signupService(userWithAdminFlag)
-            navigate('/login')
-        } catch (error) {
-            console.error('Signup failed: ', error)
-        }
+        const userWithAdminFlag = { ...userData, isAdmin: false }
+        await signupService(userWithAdminFlag)
+        navigate('/login')
     }
 
     const logout = () => {

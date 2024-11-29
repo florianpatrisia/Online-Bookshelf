@@ -23,7 +23,7 @@ const BookViewAdminPage: React.FC = () => {
             try {
                 const bookData = await getBookById(id!)
                 if (!bookData) {
-                    setError('Book not found.')
+                    setError('Book not found!')
                 } else {
                     setBook(bookData)
                 }
@@ -31,7 +31,7 @@ const BookViewAdminPage: React.FC = () => {
                 if (error instanceof Error) {
                     setError(error.message)
                 } else {
-                    setError('Book not found.')
+                    setError('Book not found!')
                 }
             } finally {
                 setLoading(false)
@@ -41,28 +41,18 @@ const BookViewAdminPage: React.FC = () => {
     }, [id, getBookById])
 
     const handleUpdateClick = () => {
-        navigate(`/edit-book/${id}`) // Navigate to the edit page
+        navigate(`/edit-book/${id}`)
     }
 
     const handleDeleteClick = async () => {
-        try {
-            await deleteBook(id!)
-            navigate('/bookshelf')
-        } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message)
-            } else {
-                setError('Failed to delete the book')
-            }
-        }
+        await deleteBook(id!, (errorMessage) => {
+            setError(errorMessage)
+        })
+        navigate('/bookshelf')
     }
 
     if (loading) {
         return <div className="loading">Loading...</div>
-    }
-
-    if (error) {
-        return <div className="loading">{error}</div>
     }
 
     if (!book) {
@@ -129,6 +119,7 @@ const BookViewAdminPage: React.FC = () => {
                             </button>
                         </div>
                     )}
+                    {error && <div className="error-message">{error}</div>}
                 </div>
             </div>
         </div>

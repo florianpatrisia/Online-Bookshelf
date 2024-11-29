@@ -27,6 +27,12 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
@@ -65,10 +71,26 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+		configuration.setAllowedOrigins(List.of("http://localhost:3000")); // Add your frontend URL here
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // Adjust the allowed HTTP methods
+		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
+		configuration.setAllowCredentials(true); // Allow credentials (cookies or headers)
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration); // Apply to all endpoints
+		return source;
+	}
+
+
+	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		System.out.println(http);
-		return http.csrf(AbstractHttpConfigurer::disable)
-			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
+		return http
+				.cors(c -> c.configurationSource(corsConfigurationSource()))
+				.csrf(AbstractHttpConfigurer::disable)
+			    .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
 				.permitAll()
 				.requestMatchers(antMatcher(HttpMethod.GET, "/api/books/**"))
 				.permitAll()

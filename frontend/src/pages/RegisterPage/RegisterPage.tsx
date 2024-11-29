@@ -3,6 +3,7 @@ import './RegisterPage.css'
 import '../../utils/reset.css'
 import React, { useState } from 'react'
 import { useAuthContext } from '../../context/AuthContext.tsx'
+import axios from 'axios'
 
 export function RegisterPage() {
     const { signup } = useAuthContext()
@@ -12,21 +13,33 @@ export function RegisterPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState<string | null>(null)
+    const [loading, setLoading] = useState(false)
 
     const submitHandler = async (e: React.FormEvent) => {
-        e.preventDefault() // Prevent page reload
+        e.preventDefault()
 
         try {
             await signup({ username, email, password })
             navigate('/login')
         } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message)
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    const errorMessage =
+                        error.response.data?.message ||
+                        'Signup failed. Please try again.'
+                    setError(errorMessage)
+                } else if (error.request) {
+                    setError(
+                        'No response from server. Please check your internet connection.'
+                    )
+                }
+            } else if (error instanceof Error) {
+                setError('Signup failed. Please try again.')
             } else {
-                setError(
-                    'Signup failed. Please check the completed data and try again.'
-                )
+                setError('An unknown error occurred.')
             }
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -69,8 +82,12 @@ export function RegisterPage() {
                         />
                     </div>
                     {error && <div className="error-message">{error}</div>}
-                    <button type="submit" className="btn-create">
-                        Sign up
+                    <button
+                        type="submit"
+                        className="btn-create"
+                        disabled={loading}
+                    >
+                        {loading ? 'Signing up...' : 'Sign up'}
                     </button>
                 </fieldset>
             </form>

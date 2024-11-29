@@ -72,18 +72,10 @@ const AddBookPage: React.FC = () => {
             }
         })
 
-        try {
-            await addBook(formDataToSubmit)
-            navigate('/bookshelf')
-        } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message)
-            } else {
-                setError('Failed to fetch book')
-            }
-        } finally {
-            setLoading(false)
-        }
+        await addBook(formDataToSubmit, (errorMessage) => {
+            setError(errorMessage)
+        })
+        navigate('/bookshelf')
     }
 
     return (
@@ -231,6 +223,7 @@ const AddBookPage: React.FC = () => {
                         />
                     )}
                 </div>
+                {error && <div className="error-message">{error}</div>}
                 <button
                     type="submit"
                     className="btn btn-primary"
@@ -238,9 +231,6 @@ const AddBookPage: React.FC = () => {
                 >
                     {loading ? 'Saving...' : 'Add Book'}
                 </button>
-                {error && (
-                    <div className="alert alert-danger mt-3">{error}</div>
-                )}
             </form>
         </div>
     )

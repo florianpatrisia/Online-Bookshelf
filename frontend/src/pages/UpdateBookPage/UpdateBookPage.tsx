@@ -28,7 +28,7 @@ const UpdateBookPage: React.FC = () => {
             try {
                 const book = await getBookById(id!)
                 if (!book) {
-                    setError('Book not found.')
+                    setError('Book not found!')
                 } else {
                     setFormData((prevData) => ({
                         ...prevData,
@@ -63,7 +63,7 @@ const UpdateBookPage: React.FC = () => {
         if (file) {
             const reader = new FileReader()
             reader.onloadend = () => setImagePreview(reader.result as string)
-            reader.onerror = () => setError('Failed to load image preview')
+            reader.onerror = () => setError('Failed to load image preview!')
             reader.readAsDataURL(file)
 
             setFormData((prevData) => ({ ...prevData, image: file }))
@@ -98,6 +98,7 @@ const UpdateBookPage: React.FC = () => {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault()
+        setError(null)
 
         if (!formData) return
 
@@ -114,32 +115,18 @@ const UpdateBookPage: React.FC = () => {
             formDataToSubmit.delete('image')
         }
 
-        try {
-            const formDataEntries = Array.from(formDataToSubmit.entries())
-            formDataEntries.forEach(([key, value]) => {
-                console.log(`${key}: ${value}`)
-            })
-            await updateBook(id!, formDataToSubmit)
-            navigate(`/books/${id}`)
-        } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message)
-            } else {
-                setError('Failed to update book')
-            }
-        }
+        await updateBook(id!, formDataToSubmit, (errorMessage) => {
+            setError(errorMessage)
+        })
+        navigate(`/books/${id}`)
     }
 
     if (loading) {
         return <div>Loading...</div>
     }
 
-    if (error) {
-        return <div>Error: {error}</div>
-    }
-
     if (!formData) {
-        return <div>Book not found.</div>
+        return <div>Book not found!</div>
     }
 
     return (
@@ -287,6 +274,7 @@ const UpdateBookPage: React.FC = () => {
                         />
                     )}
                 </div>
+                {error && <div className="error-message">{error}</div>}
                 <button
                     type="submit"
                     className="btn btn-primary"
@@ -294,9 +282,6 @@ const UpdateBookPage: React.FC = () => {
                 >
                     {loading ? 'Updating...' : 'Update Book'}
                 </button>
-                {error && (
-                    <div className="alert alert-danger mt-3">{error}</div>
-                )}
             </form>
         </div>
     )

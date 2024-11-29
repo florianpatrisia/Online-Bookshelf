@@ -16,11 +16,19 @@ import {
 
 export interface BooksContext {
     books: Book[]
-    addBook: (book: FormData) => Promise<void>
+    addBook: (
+        book: FormData,
+        onError?: (error: string) => void
+    ) => Promise<void>
     setBooks: React.Dispatch<React.SetStateAction<Book[]>>
     getBookById: (id: string) => Promise<Book | undefined>
-    deleteBook: (id: string) => Promise<void>
-    updateBook: (id: string, updatedBook: FormData) => Promise<void>
+    deleteBook: (id: string, onError?: (error: string) => void) => Promise<void>
+    updateBook: (
+        id: string,
+        updatedBook: FormData,
+        onError?: (error: string) => void
+    ) => Promise<void>
+    error: string | null
 }
 
 const initialBooks: Book[] = []
@@ -39,6 +47,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
     const [books, setBooks] = useState<Book[]>(initialBooks)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const loadBooks = async () => {
@@ -46,40 +55,69 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
                 const fetchedBooks = await fetchBooks()
                 setBooks(fetchedBooks)
             } catch (error) {
-                console.error('Error loading books:', error)
+                const errorMessage =
+                    error instanceof Error
+                        ? 'There was an error loading the books. Please try again later.'
+                        : 'An unexpected error occurred.'
+                setError(errorMessage)
             }
         }
         loadBooks()
     }, [])
 
-    const addBook = async (book: FormData): Promise<void> => {
+    const addBook = async (
+        book: FormData,
+        onError?: (error: string) => void
+    ): Promise<void> => {
         try {
             await addBookService(book)
             const updatedBooks = await fetchBooks()
             setBooks(updatedBooks)
         } catch (error) {
-            console.error('Error adding book:', error)
+            const errorMessage =
+                error instanceof Error
+                    ? 'There was an error saving the book. Please try again later.'
+                    : 'An unexpected error occurred.'
+            if (onError) onError(errorMessage)
+            setError(errorMessage)
         }
     }
 
-    const updateBook = async (id: string, book: FormData): Promise<void> => {
+    const updateBook = async (
+        id: string,
+        book: FormData,
+        onError?: (error: string) => void
+    ): Promise<void> => {
         try {
             await updateBookService(id, book)
             const fetchedBooks = await fetchBooks()
             setBooks(fetchedBooks)
         } catch (error) {
-            console.error('Error updating book:', error)
+            const errorMessage =
+                error instanceof Error
+                    ? 'There was an error updating the book. Please try again later.'
+                    : 'An unexpected error occurred.'
+            if (onError) onError(errorMessage)
+            setError(errorMessage)
         }
     }
 
-    const deleteBook = async (id: string): Promise<void> => {
+    const deleteBook = async (
+        id: string,
+        onError?: (error: string) => void
+    ): Promise<void> => {
         const prevBooks = [...books]
         setBooks((prevBooks) => prevBooks.filter((b) => b.bookId != id))
 
         try {
             await deleteBookService(id)
         } catch (error) {
-            console.error('Error deleting book:', error)
+            const errorMessage =
+                error instanceof Error
+                    ? 'There was an error deleting the book. Please try again later.'
+                    : 'An unexpected error occurred.'
+            if (onError) onError(errorMessage)
+            setError(errorMessage)
             setBooks(prevBooks)
         }
     }
@@ -88,7 +126,11 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
         try {
             return await fetchBookById(id)
         } catch (error) {
-            console.error('Error fetching book by ID:', error)
+            const errorMessage =
+                error instanceof Error
+                    ? 'There was an error finding the book. Please try again later.'
+                    : 'An unexpected error occurred.'
+            setError(errorMessage)
             return undefined
         }
     }
@@ -102,6 +144,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
                 deleteBook,
                 getBookById,
                 setBooks,
+                error,
             }}
         >
             {children}

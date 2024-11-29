@@ -3,6 +3,7 @@ import './LoginPage.css'
 import '../../utils/reset.css'
 import { useAuthContext } from '../../context/AuthContext.tsx'
 import React, { useState } from 'react'
+import axios from 'axios'
 
 export function LoginPage() {
     const { login } = useAuthContext()
@@ -11,21 +12,33 @@ export function LoginPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState<string | null>(null)
+    const [loading, setLoading] = useState(false)
 
     const submitHandler = async (e: React.FormEvent) => {
-        e.preventDefault() // Prevent page reload
+        e.preventDefault()
 
         try {
             await login(email, password)
             navigate('/')
         } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message)
+            if (axios.isAxiosError(error)) {
+                if (error.response) {
+                    const errorMessage =
+                        error.response.data?.message ||
+                        'Login failed. Please try again.'
+                    setError(errorMessage)
+                } else if (error.request) {
+                    setError(
+                        'No response from server. Please check your internet connection.'
+                    )
+                }
+            } else if (error instanceof Error) {
+                setError('Login failed. Please try again.')
             } else {
-                setError(
-                    'Login failed. Please check your credentials and try again.'
-                )
+                setError('An unknown error occurred.')
             }
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -57,8 +70,12 @@ export function LoginPage() {
                         />
                     </div>
                     {error && <div className="error-message">{error}</div>}
-                    <button type="submit" className="btn-create">
-                        Log in
+                    <button
+                        type="submit"
+                        className="btn-create"
+                        disabled={loading}
+                    >
+                        {loading ? 'Logging in...' : 'Log in'}
                     </button>
                 </fieldset>
             </form>
