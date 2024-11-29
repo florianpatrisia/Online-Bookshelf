@@ -73,8 +73,14 @@ public class SecurityConfiguration {
 	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(List.of("http://localhost:3000")); // Add your frontend URL here
-		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // Adjust the allowed HTTP methods
+		configuration.setAllowedOrigins(List.of("http://localhost:3000")); // Add your
+																			// frontend
+																			// URL here
+		configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE")); // Adjust
+																						// the
+																						// allowed
+																						// HTTP
+																						// methods
 		configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Accept"));
 		configuration.setAllowCredentials(true); // Allow credentials (cookies or headers)
 
@@ -83,14 +89,12 @@ public class SecurityConfiguration {
 		return source;
 	}
 
-
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		System.out.println(http);
-		return http
-				.cors(c -> c.configurationSource(corsConfigurationSource()))
-				.csrf(AbstractHttpConfigurer::disable)
-			    .authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
+		return http.cors(c -> c.configurationSource(corsConfigurationSource()))
+			.csrf(AbstractHttpConfigurer::disable)
+			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
 				.permitAll()
 				.requestMatchers(antMatcher(HttpMethod.GET, "/api/books/**"))
 				.permitAll()
