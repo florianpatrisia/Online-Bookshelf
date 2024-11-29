@@ -1,6 +1,5 @@
 import { Book } from '../models/Book.ts'
-
-export const API_BASE_URL = 'http://localhost:8080'
+import { API_BASE_URL, axiosInstance } from './authApi.ts'
 
 const handleResponse = async (response: Response) => {
     if (!response.ok) {
@@ -17,6 +16,17 @@ const handleResponse = async (response: Response) => {
     }
 }
 
+// export const fetchBookById = async (id: string): Promise<Book> => {
+//     const response = await axiosInstance.get(`/api/books/${id}`)
+//     return handleResponse(response.data)
+// }
+//
+// export const fetchBooks = async (): Promise<Book[]> => {
+//     const response = await axiosInstance.get('/api/books')
+//     return handleResponse(response.data)
+// }
+
+// fetch books doesn't require token
 export const fetchBookById = async (id: string): Promise<Book> => {
     const response = await fetch(`${API_BASE_URL}/api/books/${id}`)
     return handleResponse(response)
@@ -28,27 +38,20 @@ export const fetchBooks = async (): Promise<Book[]> => {
 }
 
 export const addBookService = async (book: FormData): Promise<Book> => {
-    const response = await fetch(`${API_BASE_URL}/api/books`, {
-        method: 'POST',
-        body: book,
-    })
-    return handleResponse(response)
+    console.log(axiosInstance)
+    const response = await axiosInstance.post('/api/books/admin', book)
+    return handleResponse(response.data)
 }
 
 export const updateBookService = async (
     id: string,
     book: FormData
 ): Promise<Book> => {
-    const response = await fetch(`${API_BASE_URL}/api/books/${id}`, {
-        method: 'PUT',
-        body: book,
-    })
-    return handleResponse(response)
+    const response = await axiosInstance.put(`/api/books/admin/${id}`, book)
+    return handleResponse(response.data)
 }
 
 export const deleteBookService = async (id: string): Promise<void> => {
-    const response = await fetch(`${API_BASE_URL}/api/books/${id}`, {
-        method: 'DELETE',
-    })
-    await handleResponse(response)
+    const response = await axiosInstance.delete(`/api/books/admin/${id}`)
+    await handleResponse(response.data)
 }

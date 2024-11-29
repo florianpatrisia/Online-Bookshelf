@@ -1,19 +1,27 @@
+/*
+To Do: when you make the page smaller,
+the toggle navbar appears but it is transparent??
+should be white
+*/
+
 .custom-navbar {
-    padding-left: 40px; /* Padding left */
-    padding-right: 50px; /* Padding right */
-    z-index: 1000; /* Ensure the navbar is above other content */
+    padding-left: 40px;
+    padding-right: 50px;
+    z-index: 1000;
     background-color: var(
         --color-background-secondary
-    ) !important; /* Ensure the background color is applied */
+    );
     opacity: 1;
 }
 
 .search-container {
     position: fixed;
-    right: 40px;
+    right: 80px;
     display: flex;
     align-items: center;
+    justify-content: center;
     margin-left: 20px;
+    gap: 7px;
 }
 
 .search-icon {
@@ -30,48 +38,53 @@
 }
 
 .search-form.visible {
-    max-width: 250px; /* Adjust the width as needed */
+    max-width: 250px;
     opacity: 1;
 }
 
 .custom-navbar .form-control {
-    margin-right: 10px; /* Space between search bar and button */
-    width: 250px; /* Make the search bar longer */
+    margin-right: 10px;
+    width: 250px;
 }
 
 @media (max-width: 992px) {
     .search-container {
-        position: absolute; /* Change to absolute positioning */
-        right: 125px; /* Adjust position to keep it from overlapping */
-        top: 10px; /* Position it below the toggle button */
+        position: absolute;
+        right: 125px;
+        top: 10px;
     }
 
     .custom-navbar {
         background-color: var(
             --color-background-secondary
-        ); /* Ensure background color is consistent */
-        opacity: 1; /* Ensure the navbar is fully opaque */
+        ) !important;
+        opacity: 1 !important;
+    }
+
+    .custom-nav {
+        margin-left: 0 !important;
+    }
+
+    .custom-nav .nav-link {
+        margin-right: 0 !important;
     }
 
     .navbar-toggler {
         background-color: var(
             --color-background-secondary
-        ); /* Ensure the toggle button has a solid background */
+        );
+        opacity: 1;
         border: none;
     }
 
     .navbar-toggler:focus,
     .navbar-toggler:not(:disabled) {
-        outline: none; /* Remove the default focus outline */
-        border: none; /* Ensure no border is applied */
+        outline: none;
+        border: none;
     }
 
     .navbar-toggler:focus-visible {
         outline: none;
-    }
-
-    .custom-nav {
-        background-color: #fff; /* Change the toggle icon color to be visible against the background */
     }
 }
 
@@ -81,21 +94,39 @@
     }
 
     .search-container {
-        position: fixed; /* Keep fixed on larger screens */
-        right: 50px; /* Adjust this value to position the container */
+        position: fixed;
+        right: 50px;
         display: flex;
         align-items: center;
+        justify-content: center;
         margin-left: 20px;
     }
 }
 
+.custom-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .custom-nav .nav-link {
-    margin-right: 50px; /* Add more space between the links */
+    width: 120px;
+    border-radius: 0.2rem;
+    margin-right: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
 }
 
 .custom-nav:first-child {
-    margin-left: 50px; /* Add more space between the links */
+    margin-left: 40px;
 }
+
+.custom-navbar .btn {
+    border-radius: 0.2rem;
+}
+
 .nav-link:hover,
 .nav-link:focus,
 .nav-link:active {

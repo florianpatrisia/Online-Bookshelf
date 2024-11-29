@@ -12,12 +12,12 @@ const BestsellerBooks: React.FC = () => {
         books?.filter((book) => book.availableCount > 0).slice(0, 5) || []
 
     if (!books || books.length === 0) {
-        return <div>Loading...</div>
+        return <div className="loading">Loading...</div>
     }
 
     return (
         <div>
-            <h2 className="bestseller-title">Bestseller Books</h2>
+            <h1 className="mb-4">Bestseller Books</h1>
             <Row xs={1} md={3} lg={5} className="g-4">
                 {bestSellers.map((book: Book) => (
                     <Col key={book.bookId}>

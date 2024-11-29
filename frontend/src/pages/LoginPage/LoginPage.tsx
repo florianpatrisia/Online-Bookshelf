@@ -1,9 +1,34 @@
 import { useNavigate } from 'react-router-dom'
 import './LoginPage.css'
 import '../../utils/reset.css'
+import { useAuthContext } from '../../context/AuthContext.tsx'
+import React, { useState } from 'react'
+
 export function LoginPage() {
+    const { login } = useAuthContext()
     const navigate = useNavigate()
-    function submitHandler() {}
+
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [error, setError] = useState<string | null>(null)
+
+    const submitHandler = async (e: React.FormEvent) => {
+        e.preventDefault() // Prevent page reload
+
+        try {
+            await login(email, password)
+            navigate('/')
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message)
+            } else {
+                setError(
+                    'Login failed. Please check your credentials and try again.'
+                )
+            }
+        }
+    }
+
     return (
         <>
             <form onSubmit={submitHandler} name="register-form-login">
@@ -16,6 +41,8 @@ export function LoginPage() {
                             name="email"
                             className="input-email"
                             required
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </div>
                     <div>
@@ -25,14 +52,13 @@ export function LoginPage() {
                             name="password"
                             className="input-password"
                             required
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
-                    <button
-                        type="submit"
-                        className="btn-create"
-                        onClick={() => navigate('/')}
-                    >
-                        Done
+                    {error && <div className="error-message">{error}</div>}
+                    <button type="submit" className="btn-create">
+                        Log in
                     </button>
                 </fieldset>
             </form>

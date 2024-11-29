@@ -12,7 +12,7 @@ import {
     fetchBookById,
     fetchBooks,
     updateBookService,
-} from '../services/api'
+} from '../services/booksApi.ts'
 
 export interface BooksContext {
     books: Book[]
