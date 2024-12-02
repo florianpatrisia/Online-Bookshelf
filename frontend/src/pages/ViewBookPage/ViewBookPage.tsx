@@ -4,10 +4,14 @@ import StarRating from '../../components/StarRating/StarRating.tsx'
 import { Book } from '../../models/Book.ts'
 import { useBookContext } from '../../context/BooksContext.tsx'
 import MyNavbar from '../../components/Navbar/Navbar.tsx'
-import './ViewBookAdminPage.css'
+import './ViewBookPage.css'
+import { useAuthContext } from '../../context/AuthContext.tsx'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHeart } from '@fortawesome/free-solid-svg-icons'
 
 const BookViewAdminPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()
+    const { user } = useAuthContext()
     const navigate = useNavigate()
     const { getBookById, deleteBook } = useBookContext()
     const [book, setBook] = useState<Book | null>(null)
@@ -19,7 +23,7 @@ const BookViewAdminPage: React.FC = () => {
             try {
                 const bookData = await getBookById(id!)
                 if (!bookData) {
-                    setError('Book not found.')
+                    setError('Book not found!')
                 } else {
                     setBook(bookData)
                 }
@@ -27,7 +31,7 @@ const BookViewAdminPage: React.FC = () => {
                 if (error instanceof Error) {
                     setError(error.message)
                 } else {
-                    setError('Book not found.')
+                    setError('Book not found!')
                 }
             } finally {
                 setLoading(false)
@@ -41,28 +45,18 @@ const BookViewAdminPage: React.FC = () => {
     }
 
     const handleDeleteClick = async () => {
-        try {
-            await deleteBook(id!)
-            navigate('/bookshelf')
-        } catch (error) {
-            if (error instanceof Error) {
-                setError(error.message)
-            } else {
-                setError('Failed to delete the book')
-            }
-        }
+        await deleteBook(id!, (errorMessage) => {
+            setError(errorMessage)
+        })
+        navigate('/bookshelf')
     }
 
     if (loading) {
-        return <div className="container mt-5">Loading...</div>
-    }
-
-    if (error) {
-        return <div className="container mt-5">{error}</div>
+        return <div className="loading">Loading...</div>
     }
 
     if (!book) {
-        return <div className="container mt-5">Book not found.</div>
+        return <div className="loading">Book not found.</div>
     }
 
     return (
@@ -99,18 +93,33 @@ const BookViewAdminPage: React.FC = () => {
                     <p>
                         <strong>Available Count:</strong> {book!.availableCount}
                     </p>
-                    <button
-                        className="btn btn-primary"
-                        onClick={handleUpdateClick}
-                    >
-                        Update this Book
-                    </button>
-                    <button
-                        className="btn btn-primary"
-                        onClick={handleDeleteClick}
-                    >
-                        Delete this Book
-                    </button>
+
+                    {user && user.isAdmin ? (
+                        <div className="d-flex mt-3">
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleUpdateClick}
+                            >
+                                Update this Book
+                            </button>
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleDeleteClick}
+                            >
+                                Delete this Book
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="d-flex mt-3 user-btn">
+                            <button className="btn btn-primary">
+                                Add to Cart
+                            </button>
+                            <button className="btn btn-light fav-btn">
+                                <FontAwesomeIcon icon={faHeart} />
+                            </button>
+                        </div>
+                    )}
+                    {error && <div className="error-message">{error}</div>}
                 </div>
             </div>
         </div>

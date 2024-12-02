@@ -24,3 +24,8 @@
 .btn-primary:hover {
     background-color: var(--color-button-secondary);
 }
+
+.error-message {
+    margin-top: 20px;
+    color: var(--color-button-primary);
+}

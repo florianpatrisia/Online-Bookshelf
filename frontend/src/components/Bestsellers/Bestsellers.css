@@ -4,3 +4,8 @@
     color: var(--color-font-primary);
     font-size: var(--size-font-m);
 }
+
+.loading {
+    margin-top: 15rem;
+    font-size: var(--size-font-s);
+}

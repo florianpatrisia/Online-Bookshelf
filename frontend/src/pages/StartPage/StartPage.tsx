@@ -2,6 +2,7 @@ import Logo from '../../assets/Logo.jpg'
 import './StartPage.css'
 import '../../utils/reset.css'
 import { useNavigate } from 'react-router-dom'
+
 export function StartPage() {
     const navigate = useNavigate()
     return (
