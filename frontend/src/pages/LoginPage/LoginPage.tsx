@@ -9,7 +9,7 @@ export function LoginPage() {
     const { login } = useAuthContext()
     const navigate = useNavigate()
 
-    const [email, setEmail] = useState('')
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
@@ -18,7 +18,7 @@ export function LoginPage() {
         e.preventDefault()
 
         try {
-            await login(email, password)
+            await login(username, password)
             navigate('/')
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -50,12 +50,12 @@ export function LoginPage() {
                     <div>
                         <input
                             type="text"
-                            placeholder="Email"
-                            name="email"
-                            className="input-email"
+                            placeholder="Username"
+                            name="username"
+                            className="input-username"
                             required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                         />
                     </div>
                     <div>

@@ -15,7 +15,7 @@
     color: var(--color-button-primary);
 }
 
-.input-email,
+.input-username,
 .input-password {
     margin-top: 4rem;
     border-top: none;
@@ -23,6 +23,7 @@
     border-right: none;
     width: 300px;
 }
+
 .btn-create {
     margin-top: 4rem;
     border: none;
