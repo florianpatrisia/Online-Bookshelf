@@ -39,7 +39,7 @@ const BookViewUserPage: React.FC = () => {
             }
         }
         fetchBook()
-    }, [id])
+    }, [id, loadReviewsByBookId])
 
     if (loading) {
         return <div className="container mt-5">Loading...</div>
