@@ -40,7 +40,7 @@ const BookViewAdminPage: React.FC = () => {
             }
         }
         fetchBook()
-    }, [id, getBookById])
+    }, [id, getBookById, loadReviewsByBookId])
 
     const handleUpdateClick = () => {
         navigate(`/edit-book/${id}`)

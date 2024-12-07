@@ -11,7 +11,6 @@ import { useReviewsContext } from '../../context/ReviewsContext'
 import { Review } from '../../models/Review'
 import ReviewCardUser from '../../components/Review/ReviewCardUser'
 import { Button, Card, Form } from 'react-bootstrap'
-import { useAuthContext } from '../../context/AuthContext'
 
 const BookViewUserPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()
@@ -196,7 +195,7 @@ const BookViewUserPage: React.FC = () => {
                     <p>No reviews for this book yet.</p>
                 ) : (
                     <div className="row">
-                        {reviews.map((review: Review, index: number) => (
+                        {reviews.map((review: Review) => (
                             <div
                                 key={review.reviewId}
                                 className="col-md-3 mb-4"

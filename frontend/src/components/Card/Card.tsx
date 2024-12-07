@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import { Book } from '../../models/Book'
 import './Card.css'
 import '../../utils/reset.css'
-import { Navigate, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthContext'
 
 interface CardProps {
