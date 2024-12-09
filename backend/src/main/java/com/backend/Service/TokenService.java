@@ -16,36 +16,37 @@ import java.util.stream.Collectors;
 @Service
 public class TokenService {
 
-    private final JwtEncoder encoder;
-    private final UserService userService;
+	private final JwtEncoder encoder;
 
-    public TokenService(JwtEncoder encoder, UserService userService) {
-        this.encoder = encoder;
-        this.userService = userService;
-    }
+	private final UserService userService;
 
-    public TokenResponse generateToken(Authentication authentication) {
-        Instant now = Instant.now();
+	public TokenService(JwtEncoder encoder, UserService userService) {
+		this.encoder = encoder;
+		this.userService = userService;
+	}
 
-        String username = authentication.getName();
-        var user = userService.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+	public TokenResponse generateToken(Authentication authentication) {
+		Instant now = Instant.now();
 
-        List<String> roles = authentication.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+		String username = authentication.getName();
+		var user = userService.findByUsername(username)
+			.orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(now)
-                .expiresAt(now.plus(1, ChronoUnit.HOURS))
-                .subject(authentication.getName())
-                .claim("roles", roles)
-                .claim("userId", user.getUserId())
-                .build();
+		List<String> roles = authentication.getAuthorities()
+			.stream()
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.toList());
 
-        return new TokenResponse(this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
-    }
+		JwtClaimsSet claims = JwtClaimsSet.builder()
+			.issuer("self")
+			.issuedAt(now)
+			.expiresAt(now.plus(1, ChronoUnit.HOURS))
+			.subject(authentication.getName())
+			.claim("roles", roles)
+			.claim("userId", user.getUserId())
+			.build();
+
+		return new TokenResponse(this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
+	}
 
 }
