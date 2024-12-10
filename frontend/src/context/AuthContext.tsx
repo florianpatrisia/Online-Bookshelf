@@ -1,11 +1,12 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react'
 import { loginService, signupService } from '../services/authApi'
 import { useNavigate } from 'react-router-dom'
+import { User } from '../models/User'
 
 interface AuthContext {
     isAuthenticated: boolean
     token: string | null
-    user: { isAdmin: boolean } | null
+    user: User | null
     login: (username: string, password: string) => Promise<void>
     signup: (userData: {
         username: string
@@ -31,9 +32,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     const [token, setToken] = useState<string | null>(
         localStorage.getItem('token')
     )
-    const [user, setUser] = useState<{ isAdmin: boolean } | null>(
+    const [user, setUser] = useState<User | null>(
         token
             ? {
+                  userId: JSON.parse(atob(token.split('.')[1])).userId,
                   isAdmin: JSON.parse(atob(token.split('.')[1])).roles.includes(
                       'ROLE_ADMIN'
                   ),
@@ -47,8 +49,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         localStorage.setItem('token', response.token)
         setToken(response.token)
         const decoded = JSON.parse(atob(response.token.split('.')[1]))
+        const userId = decoded.userId
         const isAdmin = decoded.roles.includes('ROLE_ADMIN')
-        setUser({ isAdmin })
+        setUser({ userId, username, password, isAdmin })
         console.log(JSON.parse(atob(response.token.split('.')[1])))
         navigate('/')
     }
