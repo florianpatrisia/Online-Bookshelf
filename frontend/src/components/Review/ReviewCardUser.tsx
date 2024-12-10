@@ -17,7 +17,7 @@ const ReviewCardUser: React.FC<ReviewCardProps> = ({ review }) => {
                     <FaUserCircle className="review-card-user-icon" />
                     <div>
                         <Card.Title className="review-card-username">
-                            {'username'}
+                            {'user' + (review.userId - 12).toString()}
                         </Card.Title>
                         <div className="review-card-rating">
                             <StarRating rating={review.rating} totalStars={5} />

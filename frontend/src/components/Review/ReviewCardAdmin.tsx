@@ -18,7 +18,7 @@ const ReviewCardAdmin: React.FC<ReviewCardProps> = ({ review, onDelete }) => {
                     <FaUserCircle className="review-card-user-icon" />
                     <div>
                         <Card.Title className="review-card-username">
-                            {'username'}
+                            {'user' + (review.userId - 12).toString()}
                         </Card.Title>
                         <StarRating rating={review.rating} totalStars={5} />
                     </div>

@@ -11,6 +11,7 @@ import { useReviewsContext } from '../../context/ReviewsContext'
 import { Review } from '../../models/Review'
 import ReviewCardUser from '../../components/Review/ReviewCardUser'
 import { Button, Card, Form } from 'react-bootstrap'
+import { useAuthContext } from '../../context/AuthContext'
 
 const BookViewUserPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()
@@ -21,6 +22,7 @@ const BookViewUserPage: React.FC = () => {
     const { reviews, loadReviewsByBookId } = useReviewsContext()
     const [newRating, setNewRating] = useState<number>(0)
     const [newDescription, setNewDescription] = useState<string>('')
+    const { user } = useAuthContext()
 
     useEffect(() => {
         const fetchBook = async () => {
@@ -54,7 +56,7 @@ const BookViewUserPage: React.FC = () => {
     }
 
     const handleAddReview = async (e: React.FormEvent) => {
-        e.preventDefault() // Previne reîncărcarea paginii la submit
+        e.preventDefault()
 
         if (newRating === 0 || newDescription.trim() === '') {
             alert('Please provide a valid rating and description.')
@@ -63,7 +65,8 @@ const BookViewUserPage: React.FC = () => {
         try {
             const review: Review = {
                 bookId: parseInt(id!, 10),
-                userId: 13,
+                userId: user.userId,
+                username: user.username,
                 rating: newRating,
                 description: newDescription.trim(),
                 date: new Date().toISOString().split('T')[0],
@@ -74,7 +77,6 @@ const BookViewUserPage: React.FC = () => {
             await loadReviewsByBookId(id!)
             setNewRating(0)
             setNewDescription('')
-            alert('Review added successfully!')
         } catch (error) {
             console.error('Error adding review:', error)
             alert('Failed to add review. Please try again.')
