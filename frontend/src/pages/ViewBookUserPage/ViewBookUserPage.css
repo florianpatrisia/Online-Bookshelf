@@ -61,3 +61,8 @@
 .btn-light:hover {
     background-color: #e2e6ea;
 }
+
+.loading {
+    margin-top: 15rem;
+    font-size: var(--size-font-s);
+}

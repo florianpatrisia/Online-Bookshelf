@@ -72,15 +72,15 @@ const BookViewAdminPage: React.FC = () => {
     }
 
     if (loading) {
-        return <div className="container mt-5">Loading...</div>
+        return <div className="loading">Loading...</div>
     }
 
     if (error) {
-        return <div className="container mt-5">{error}</div>
+        return <div className="loading">{error}</div>
     }
 
     if (!book) {
-        return <div className="container mt-5">Book not found.</div>
+        return <div className="loading">Book not found.</div>
     }
 
     const generalRating = reviews.length

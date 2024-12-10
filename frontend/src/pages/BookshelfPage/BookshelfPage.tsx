@@ -26,10 +26,7 @@ export function BookshelfPage() {
                 )}
                 <div className="card-grid">
                     {books.map((book) => (
-                        <div
-                            className="col-md-4 mb-4 card-elem"
-                            key={book.bookId}
-                        >
+                        <div className="col-md-4 card-elem" key={book.bookId}>
                             <Card book={book} />
                         </div>
                     ))}

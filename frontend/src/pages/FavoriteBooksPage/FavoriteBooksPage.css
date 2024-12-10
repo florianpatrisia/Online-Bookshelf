@@ -36,12 +36,7 @@
     font-size: var(--size-font-s);
 }
 
-/* if you want the button to be like before,
-(under the Bookshelf title)
-just delete this style */
-.add-btn {
-    position: fixed;
-    bottom: 20px;
-    right: 30px;
-    z-index: 1000;
+.no-favorite-books {
+    margin-top: 15rem;
+    font-size: 1rem;
 }

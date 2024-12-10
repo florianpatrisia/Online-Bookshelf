@@ -51,3 +51,8 @@
 .btn-primary:hover {
     background-color: var(--color-button-secondary);
 }
+
+.loading {
+    margin-top: 15rem;
+    font-size: var(--size-font-s);
+}
