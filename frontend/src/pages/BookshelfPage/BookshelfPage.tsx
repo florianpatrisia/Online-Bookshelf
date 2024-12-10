@@ -3,14 +3,21 @@ import '../../utils/reset.css'
 import Card from '../../components/Card/Card'
 import './BookshelfPage.css'
 import MyNavbar from '../../components/Navbar/Navbar'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthContext.tsx'
+import { useEffect } from 'react'
 
 export function BookshelfPage() {
-    const { books } = useBookContext()
+    const { books, loadBooksByCategory } = useBookContext()
     const { user } = useAuthContext()
+    const [searchParams] = useSearchParams()
 
-    if (!books || books.length === 0) {
+    useEffect(() => {
+        const category = searchParams.get('category')
+        loadBooksByCategory(category || '')
+    }, [searchParams])
+
+    if (!books) {
         return <div className="loading">Loading...</div>
     }
 
@@ -25,11 +32,20 @@ export function BookshelfPage() {
                     </Link>
                 )}
                 <div className="card-grid">
-                    {books.map((book) => (
-                        <div className="col-md-4 card-elem" key={book.bookId}>
-                            <Card book={book} />
+                    {books.length > 0 ? (
+                        books.map((book) => (
+                            <div
+                                className="col-md-4 mb-4 card-elem"
+                                key={book.bookId}
+                            >
+                                <Card book={book} />
+                            </div>
+                        ))
+                    ) : (
+                        <div className="no-books-message">
+                            <h2>No books in this category</h2>
                         </div>
-                    ))}
+                    )}
                 </div>
             </div>
         </>

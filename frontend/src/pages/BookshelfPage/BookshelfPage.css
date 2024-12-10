@@ -45,3 +45,14 @@ just delete this style */
     right: 30px;
     z-index: 1000;
 }
+
+.no-books-message {
+    text-align: center;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: #6c757d;
+    font-size: 1.25rem;
+}
