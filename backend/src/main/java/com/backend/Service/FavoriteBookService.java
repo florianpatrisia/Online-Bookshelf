@@ -7,6 +7,7 @@ import com.backend.Repository.BookRepository;
 import com.backend.Repository.FavoriteBookRepository;
 import com.backend.Repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class FavoriteBookService {
 		favoriteBookRepository.save(favoriteBook);
 	}
 
+	@Transactional
 	public void removeFavorite(Long userId, Long bookId) {
 		if (!favoriteBookRepository.existsByUser_UserIdAndBook_BookId(userId, bookId)) {
 			throw new IllegalStateException("Book is not a favorite.");

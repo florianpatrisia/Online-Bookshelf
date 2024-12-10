@@ -1,5 +1,6 @@
 package com.backend.Controller;
 
+import com.backend.DTO.FavoriteBookDTO;
 import com.backend.Model.FavoriteBook;
 import com.backend.Service.FavoriteBookService;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +20,29 @@ public class FavoriteBookController {
 	}
 
 	@PostMapping("/add")
-	public ResponseEntity<String> addFavorite(@RequestParam Long userId, @RequestParam Long bookId) {
-		favoriteBookService.addFavorite(userId, bookId);
+	public ResponseEntity<String> addFavorite(@RequestBody FavoriteBookDTO request) {
+		if (request.getUserId() == null) {
+			throw new IllegalArgumentException("userId is required.");
+		}
+		if (request.getBookId() == null) {
+			throw new IllegalArgumentException("bookId is required.");
+		}
+		favoriteBookService.addFavorite(request.getUserId(), request.getBookId());
 		return ResponseEntity.ok("Book added to favorites");
 	}
 
-	@DeleteMapping("/remove")
-	public ResponseEntity<String> removeFavorite(@RequestParam Long userId, @RequestParam Long bookId) {
-		favoriteBookService.removeFavorite(userId, bookId);
+	@PostMapping("/remove")
+	public ResponseEntity<String> removeFavorite(@RequestBody FavoriteBookDTO request) {
+		if (request.getUserId() == null) {
+			throw new IllegalArgumentException("userId is required.");
+		}
+		if (request.getBookId() == null) {
+			throw new IllegalArgumentException("bookId is required.");
+		}
+		favoriteBookService.removeFavorite(request.getUserId(), request.getBookId());
 		return ResponseEntity.ok("Book removed from favorites");
 	}
+
 
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<List<FavoriteBook>> getFavoritesByUser(@PathVariable Long userId) {
