@@ -85,31 +85,25 @@ public class SecurityConfiguration {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		System.out.println(http);
 		return http.cors(c -> c.configurationSource(corsConfigurationSource()))
-			.csrf(AbstractHttpConfigurer::disable)
-			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
-				.permitAll()
-				.requestMatchers(antMatcher(HttpMethod.GET, "/api/books/**"))
-				.permitAll()
-				.requestMatchers(antMatcher(HttpMethod.GET, "/api/reviews/**"))
-				.permitAll()
-				.requestMatchers(antMatcher(HttpMethod.POST, "/api/reviews/**"))
-				.hasAnyRole("USER", "ADMIN")
-				.requestMatchers(antMatcher(HttpMethod.PUT, "/api/reviews/**"))
-				.hasAnyRole("USER", "ADMIN")
-				.requestMatchers("/api/books/admin/**")
-				.hasRole("ADMIN")
-				.requestMatchers("/api/reviews/admin/**")
-				.hasRole("ADMIN")
-				.anyRequest()
-				.authenticated())
-			.oauth2ResourceServer(
-					oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.httpBasic(Customizer.withDefaults())
-			.build();
+				.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/api/auth/**").permitAll()
+						.requestMatchers(antMatcher(HttpMethod.GET, "/api/books/**")).permitAll()
+						.requestMatchers(antMatcher(HttpMethod.GET, "/api/reviews/**")).permitAll()
+						.requestMatchers(antMatcher(HttpMethod.POST, "/api/reviews/**")).hasAnyRole("USER", "ADMIN")
+						.requestMatchers(antMatcher(HttpMethod.PUT, "/api/reviews/**")).hasAnyRole("USER", "ADMIN")
+						.requestMatchers("/api/books/admin/**").hasRole("ADMIN")
+						.requestMatchers("/api/reviews/admin/**").hasRole("ADMIN")
+						.requestMatchers("/api/favorite_books/**").hasAnyRole("USER", "ADMIN")
+						.anyRequest().authenticated()
+				)
+				.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.httpBasic(Customizer.withDefaults())
+				.build();
 	}
+
 
 	@Bean
 	JwtDecoder jwtDecoder() {
