@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import StarRating from '../../components/StarRating/StarRating.tsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHeart } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faHeartSolid } from '@fortawesome/free-solid-svg-icons'
+import { faHeart as faHeartRegular } from '@fortawesome/free-regular-svg-icons'
 import { fetchBookById } from '../../services/booksApi.ts'
 import { Book } from '../../models/Book.ts'
 import MyNavbar from '../../components/Navbar/Navbar.tsx'
@@ -12,6 +13,7 @@ import { Review } from '../../models/Review'
 import ReviewCardUser from '../../components/Review/ReviewCardUser'
 import { Button, Card, Form } from 'react-bootstrap'
 import { useAuthContext } from '../../context/AuthContext'
+import { useFavoriteBookContext } from '../../context/FavoriteBooksContext.tsx'
 
 const BookViewUserPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()
@@ -20,16 +22,27 @@ const BookViewUserPage: React.FC = () => {
     const [error, setError] = useState<string | null>(null)
     const { addReview } = useReviewsContext()
     const { reviews, loadReviewsByBookId } = useReviewsContext()
+    const { addFavoriteBook, removeFavoriteBook, isFavorite } =
+        useFavoriteBookContext()
     const [newRating, setNewRating] = useState<number>(0)
     const [newDescription, setNewDescription] = useState<string>('')
+    const [isFavoriteBook, setIsFavoriteBook] = useState<boolean>(false)
     const { user } = useAuthContext()
 
     useEffect(() => {
         const fetchBook = async () => {
             try {
                 const bookData = await fetchBookById(id!)
-                setBook(bookData)
+                if (!bookData) {
+                    setError('Book not found!')
+                } else {
+                    setBook(bookData)
+                }
+
                 await loadReviewsByBookId(id!)
+
+                const favorite = await isFavorite(Number(id!))
+                setIsFavoriteBook(favorite)
             } catch (error) {
                 if (error instanceof Error) {
                     setError(error.message)
@@ -41,18 +54,44 @@ const BookViewUserPage: React.FC = () => {
             }
         }
         fetchBook()
-    }, [id, loadReviewsByBookId])
+    }, [id, loadReviewsByBookId, isFavorite])
+
+    const handleFavoriteClick = async () => {
+        if (isFavoriteBook) {
+            try {
+                await removeFavoriteBook(Number(id!))
+                setIsFavoriteBook(false)
+            } catch (error) {
+                if (error instanceof Error) {
+                    setError(error.message)
+                } else {
+                    setError('Failed to remove the book from favorites')
+                }
+            }
+        } else {
+            try {
+                await addFavoriteBook(Number(id!))
+                setIsFavoriteBook(true)
+            } catch (error) {
+                if (error instanceof Error) {
+                    setError(error.message)
+                } else {
+                    setError('Failed to add the book to favorites')
+                }
+            }
+        }
+    }
 
     if (loading) {
-        return <div className="container mt-5">Loading...</div>
+        return <div className="loading">Loading...</div>
     }
 
     if (error) {
-        return <div className="container mt-5">Error: {error}</div>
+        return <div className="loading">Error: {error}</div>
     }
 
     if (!book) {
-        return <div className="container mt-5">Book not found.</div>
+        return <div className="loading">Book not found.</div>
     }
 
     const handleAddReview = async (e: React.FormEvent) => {
@@ -65,8 +104,8 @@ const BookViewUserPage: React.FC = () => {
         try {
             const review: Review = {
                 bookId: parseInt(id!, 10),
-                userId: user.userId,
-                username: user.username,
+                userId: user?.userId as number,
+                username: user?.username as string,
                 rating: newRating,
                 description: newDescription.trim(),
                 date: new Date().toISOString().split('T')[0],
@@ -122,8 +161,17 @@ const BookViewUserPage: React.FC = () => {
                     </p>
                     <div className="d-flex mt-3">
                         <button className="btn btn-primary">Add to Cart</button>
-                        <button className="btn btn-light">
-                            <FontAwesomeIcon icon={faHeart} />
+                        <button
+                            className="btn btn-light"
+                            onClick={handleFavoriteClick}
+                        >
+                            <FontAwesomeIcon
+                                icon={
+                                    isFavoriteBook
+                                        ? faHeartSolid
+                                        : faHeartRegular
+                                }
+                            />
                         </button>
                     </div>
                 </div>
@@ -133,7 +181,7 @@ const BookViewUserPage: React.FC = () => {
                 {/* General Rating Section */}
                 <div className="col-md-6">
                     <h3>General Rating and Reviews</h3>
-                    <p>
+                    <div>
                         <strong>General Rating:</strong>{' '}
                         <div className="ms-2">
                             <StarRating
@@ -142,7 +190,7 @@ const BookViewUserPage: React.FC = () => {
                                 size={30}
                             />
                         </div>
-                    </p>
+                    </div>
                     <p>
                         <strong>Number of Reviews:</strong> {reviews.length}
                     </p>

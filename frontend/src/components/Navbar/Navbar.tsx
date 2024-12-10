@@ -33,8 +33,8 @@ const MyNavbar: React.FC = () => {
                     <Nav.Link href="/bookshelf" className="nav-link">
                         Bookshelf
                     </Nav.Link>
-                    <Nav.Link href="#my-account" className="nav-link">
-                        My Account
+                    <Nav.Link href="/favorites" className="nav-link">
+                        Favorite Books
                     </Nav.Link>
                     <Nav.Link href="#cart" className="nav-link">
                         Cart

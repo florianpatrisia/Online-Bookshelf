@@ -85,7 +85,6 @@ public class SecurityConfiguration {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		System.out.println(http);
 		return http.cors(c -> c.configurationSource(corsConfigurationSource()))
 			.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(auth -> auth.requestMatchers("/api/auth/**")
@@ -102,6 +101,8 @@ public class SecurityConfiguration {
 				.hasRole("ADMIN")
 				.requestMatchers("/api/reviews/admin/**")
 				.hasRole("ADMIN")
+				.requestMatchers("/api/favorite_books/**")
+				.hasAnyRole("USER", "ADMIN")
 				.anyRequest()
 				.authenticated())
 			.oauth2ResourceServer(
