@@ -11,6 +11,7 @@ import {
     deleteBookService,
     fetchBookById,
     fetchBooks,
+    useFetchBooks,
     updateBookService,
 } from '../services/booksApi.ts'
 
@@ -28,6 +29,7 @@ export interface BooksContext {
         updatedBook: FormData,
         onError?: (error: string) => void
     ) => Promise<void>
+    loadBooksByCategory: (category: string) => Promise<void>
     error: string | null
 }
 
@@ -134,6 +136,22 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
             return undefined
         }
     }
+    const { fetchBooksByCategory } = useFetchBooks()
+    const loadBooksByCategory = async (category: string) => {
+        try {
+            const fetchedBooks = category
+                ? await fetchBooksByCategory(category)
+                : await fetchBooks()
+            setBooks(fetchedBooks)
+        } catch (error) {
+            const errorMessage =
+                error instanceof Error
+                    ? error.message
+                    : 'Failed to load books by category.'
+            console.error('Error loading books:', errorMessage)
+            setError(errorMessage)
+        }
+    }
 
     return (
         <BooksContext.Provider
@@ -143,6 +161,7 @@ export const BookProvider: React.FC<{ children: ReactNode }> = ({
                 updateBook,
                 deleteBook,
                 getBookById,
+                loadBooksByCategory,
                 setBooks,
                 error,
             }}

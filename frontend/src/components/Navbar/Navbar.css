@@ -120,11 +120,52 @@ should be white
 .custom-navbar .btn {
     border-radius: 0.2rem;
 }
-
-.nav-link:hover,
-.nav-link:focus,
-.nav-link:active {
+.nav-link:hover {
     background-color: var(--color-button-primary);
     color: white;
+}
+
+.bookshelf-container {
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    background: var(--color-background-primary);
+    border: none;
+    width: auto;
+    padding: 10px;
     border-radius: 0.2rem;
+}
+.dropdown-content.visible {
+    display: block;
+}
+.dropdown-content.visible .dropdown-item:hover {
+    background-color: var(--color-button-primary);
+    color: white;
+}
+.books-dropdown {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 10px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.dropdown-item {
+    padding: 8px;
+    text-align: center;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
 }

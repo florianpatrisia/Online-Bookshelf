@@ -11,6 +11,20 @@ const MyNavbar: React.FC = () => {
     const { user } = useAuthContext()
     const navigate = useNavigate()
 
+    const [isDropdownVisible, setDropdownVisible] = useState(false)
+
+    const categories = [
+        'Fiction',
+        'Non-Fiction',
+        'Science',
+        'Biography',
+        'Fantasy',
+        'Mystery',
+        'Romance',
+        'History',
+        'Horror',
+    ]
+
     const handleSearchIconClick = () => {
         setSearchVisible(!searchVisible)
     }
@@ -19,6 +33,9 @@ const MyNavbar: React.FC = () => {
         navigate('/pageTurner')
     }
 
+    const handleCategoryClick = (category: string) => {
+        navigate(`/bookshelf?category=${encodeURIComponent(category)}`)
+    }
     return (
         <Navbar expand="lg" fixed="top" className="custom-navbar">
             <Link to="/" className="navbar-brand">
@@ -30,11 +47,43 @@ const MyNavbar: React.FC = () => {
                     <Nav.Link href="/" className="nav-link">
                         Home
                     </Nav.Link>
-                    <Nav.Link href="/bookshelf" className="nav-link">
-                        Bookshelf
-                    </Nav.Link>
+
+                    <div
+                        className="nav-item bookshelf-container"
+                        onMouseEnter={() => setDropdownVisible(true)}
+                        onMouseLeave={() => setDropdownVisible(false)}
+                    >
+                        <Nav.Link href="/bookshelf" className="nav-link">
+                            Bookshelf
+                        </Nav.Link>
+                        <div
+                            className={`dropdown-content ${
+                                isDropdownVisible ? 'visible' : ''
+                            }`}
+                            onMouseEnter={() => setDropdownVisible(true)}
+                            onMouseLeave={() => setDropdownVisible(false)}
+                        >
+                            <div className="books-dropdown">
+                                {categories.map((category, index) => (
+                                    <div
+                                        key={index}
+                                        className="dropdown-item"
+                                        onClick={() =>
+                                            handleCategoryClick(category)
+                                        }
+                                    >
+                                        {category}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
                     <Nav.Link href="/favorites" className="nav-link">
                         Favorite Books
+                    </Nav.Link>
+                    <Nav.Link href="#my-account" className="nav-link">
+                        My Account
                     </Nav.Link>
                     <Nav.Link href="#cart" className="nav-link">
                         Cart
