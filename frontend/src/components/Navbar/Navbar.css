@@ -183,7 +183,7 @@ should be white
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     z-index: 10;
     max-height: 300px; /* Limit height to prevent overflow with many results */
-    overflow-y: auto;  /* Add scrolling for overflow */
+    overflow-y: auto; /* Add scrolling for overflow */
 }
 
 .search-result-item {
@@ -206,7 +206,7 @@ should be white
 
 .search-result-image {
     height: 40px; /* Set fixed height */
-    width: 40px;  /* Set fixed width */
+    width: 40px; /* Set fixed width */
     object-fit: cover; /* Maintain aspect ratio and crop excess parts */
     border-radius: 5px;
     margin-right: 10px;
