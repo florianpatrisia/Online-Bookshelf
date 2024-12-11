@@ -69,6 +69,14 @@ export const deleteBookService = async (id: string): Promise<void> => {
     const response = await axiosInstance.delete(`/api/books/admin/${id}`)
     await handleAxiosResponse(response)
 }
+export const searchBooksByTitle = async (query: string): Promise<Book[]> => {
+    const response = await fetch(
+        `${API_BASE_URL}/api/books/search/title?query=${encodeURIComponent(query)}`
+    )
+
+    // Use the existing `handleResponse` function to handle the response
+    return handleResponse(response)
+}
 
 export const useFetchBooks = () => {
     const navigate = useNavigate()

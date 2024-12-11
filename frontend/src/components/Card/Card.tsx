@@ -18,7 +18,7 @@ const Card: React.FC<CardProps> = ({ book }) => {
             navigate(`/login`)
         }
 
-        if (user.isAdmin) navigate(`/books/admin/${book.bookId}`)
+        if (user?.isAdmin) navigate(`/books/admin/${book.bookId}`)
         else navigate(`/books/${book.bookId}`)
     }
     return (
