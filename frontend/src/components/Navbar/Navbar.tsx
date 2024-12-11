@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { Navbar, Nav, Form, FormControl } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import './Navbar.css'
