@@ -15,7 +15,7 @@ export function BookshelfPage() {
     useEffect(() => {
         const category = searchParams.get('category')
         loadBooksByCategory(category || '')
-    }, [searchParams])
+    }, [searchParams, loadBooksByCategory])
 
     if (!books) {
         return <div className="loading">Loading...</div>
