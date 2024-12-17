@@ -9,13 +9,11 @@ import com.backend.Repository.BookRepository;
 import com.backend.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class BookLoanService {
@@ -68,7 +66,7 @@ public class BookLoanService {
 		Optional<Book> book = bookRepository.findById(bookId);
 		BookLoan bookLoan = bookLoanRepository.findByUser_UserIdAndBook_BookId(userId, bookId);
 
-		if (book.isEmpty() && bookLoan == null) {
+		if (book.isEmpty() || bookLoan == null) {
 			throw new Exception("Book does not exist or is not loaned by the user");
 		}
 
@@ -91,49 +89,51 @@ public class BookLoanService {
 			throw new Exception("Book is not loaned by the user");
 		}
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		LocalDate returnDate = LocalDate.parse(bookLoan.getReturnDate());
+		LocalDate today = LocalDate.now();
 
-		Date d1 = sdf.parse(bookLoan.getReturnDate());
-		Date d2 = sdf.parse(LocalDate.now().toString());
-
-		if (d1.compareTo(d2) > 0 || d1.compareTo(d2) == 0) {
-			bookLoan.setReturnDate(LocalDate.now().plusDays(7).toString());
+		// Allow renewal only if the return date is today or in the future
+		if (!returnDate.isBefore(today)) {
+			bookLoan.setReturnDate(today.plusDays(7).toString()); // Extend the return
+																	// date by 7 days
 			bookLoanRepository.save(bookLoan);
+		}
+		else {
+			throw new Exception("Cannot renew loan. The return date has already passed.");
 		}
 	}
 
-	public List<CurrentLoansResponse> currentLoans(Long userId) throws Exception {
+	public List<CurrentLoansResponse> currentLoans(Long userId) {
 		List<CurrentLoansResponse> currentLoansResponses = new ArrayList<>();
 		List<BookLoan> bookLoans = bookLoanRepository.findBookLoansByUser_UserId(userId);
-		List<Long> bookIds = new ArrayList<>();
 
-		for (BookLoan bookLoan : bookLoans) {
-			bookIds.add(bookLoan.getBook().getBookId());
-		}
+		List<Long> bookIds = bookLoans.stream().map(bl -> bl.getBook().getBookId()).toList();
 
 		List<Book> books = bookRepository.findAllById(bookIds);
 
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		LocalDate today = LocalDate.now();
 
 		for (Book book : books) {
 			Optional<BookLoan> bookLoan = bookLoans.stream()
 				.filter(b -> b.getBook().getBookId().equals(book.getBookId()))
 				.findFirst();
+
 			if (bookLoan.isPresent()) {
-				Date d1 = sdf.parse(bookLoan.get().getReturnDate());
-				Date d2 = sdf.parse(LocalDate.now().toString());
+				LocalDate returnDate = LocalDate.parse(bookLoan.get().getReturnDate());
+				long daysLeft = ChronoUnit.DAYS.between(today, returnDate);
 
-				TimeUnit time = TimeUnit.DAYS;
-
-				long differenceInTime = time.convert(d1.getTime() - d2.getTime(), TimeUnit.MILLISECONDS);
-
-				if (d1.compareTo(d2) > 0 || d1.compareTo(d2) == 0) {
-					currentLoansResponses.add(new CurrentLoansResponse(book, Math.toIntExact(differenceInTime)));
+				if (!returnDate.isBefore(today)) { // Check if the return date is today or
+													// in the future
+					currentLoansResponses.add(new CurrentLoansResponse(book, Math.toIntExact(daysLeft)));
 				}
 			}
 		}
 
 		return currentLoansResponses;
+	}
+
+	public int currentLoansCount(Long userId) {
+		return bookLoanRepository.findBookLoansByUser_UserId(userId).size();
 	}
 
 }
