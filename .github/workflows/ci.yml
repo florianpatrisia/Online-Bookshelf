@@ -31,7 +31,7 @@ jobs:
           java-version: '17'
 
   # ---------------------------------------
-  # 2) Frontend checks (runs for all events)
+  # 2) Frontend checks (runs on all events)
   # ---------------------------------------
   frontend:
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
         run: npm run lint && npm run format
 
   # ---------------------------------------
-  # 3) Backend checks & Build JAR (runs for all events)
+  # 3) Backend checks & Build JAR (runs on all events)
   # ---------------------------------------
   backend:
     runs-on: ubuntu-latest
@@ -83,12 +83,16 @@ jobs:
         working-directory: ./backend
         run: ./gradlew build
 
-      # Upload the entire build folder (including build/libs/*.jar) so next job can download it
+      - name: Debug list build/libs
+        run: ls -l build/libs
+        working-directory: ./backend
+
+      # Upload the entire build folder (including build/libs/*.jar)
       - name: Upload Backend Artifact
         uses: actions/upload-artifact@v3
         with:
           name: backend-build
-          path: ./backend/build  # This folder contains build/libs/*.jar
+          path: ./backend/build  # Contains build/libs/backend-0.0.1-SNAPSHOT.jar
 
   # ---------------------------------------
   # 4) Deployment job (only on push to main)
@@ -97,7 +101,7 @@ jobs:
   # ---------------------------------------
   deploy:
     runs-on: ubuntu-latest
-    needs: [backend]
+    needs: [backend]  
 
     # Only run this job IF it's a push event on main branch
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -106,11 +110,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Download the build artifacts into the exact same folder structure
+      # so the jar ends up at ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar
       - name: Download Backend Artifact
         uses: actions/download-artifact@v3
         with:
           name: backend-build
-          path: ./backend  # Put the build folder back into ./backend
+          path: ./backend/build
+
+      - name: Debug list backend/build/libs
+        run: ls -l ./backend/build/libs
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -124,6 +133,8 @@ jobs:
           aws ecr get-login-password --region us-east-1 \
           | docker login --username AWS --password-stdin 122610519658.dkr.ecr.us-east-1.amazonaws.com
 
+      # IMPORTANT: Docker context is the backend directory, 
+      # and the Dockerfile also references build/libs/backend-0.0.1-SNAPSHOT.jar
       - name: Build Docker image
         working-directory: ./backend
         run: docker build -t online-bookshelf-backend:latest .
