@@ -10,7 +10,7 @@ on:
 
 jobs:
   # ---------------------------------------
-  # 1) Basic setup job that runs on all events
+  # 1) Basic setup job (runs on all events)
   # ---------------------------------------
   setup:
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
         run: npm run lint && npm run format
 
   # ---------------------------------------
-  # 3) Backend checks (runs for all events)
+  # 3) Backend checks & Build JAR (runs for all events)
   # ---------------------------------------
   backend:
     runs-on: ubuntu-latest
@@ -83,14 +83,21 @@ jobs:
         working-directory: ./backend
         run: ./gradlew build
 
+      # Upload the entire build folder (including build/libs/*.jar) so next job can download it
+      - name: Upload Backend Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-build
+          path: ./backend/build  # This folder contains build/libs/*.jar
+
   # ---------------------------------------
   # 4) Deployment job (only on push to main)
-  #    This will build/push Docker image to ECR
-  #    and force ECS to pull the latest image.
+  #    This pulls the artifact from the backend job,
+  #    builds+pushes Docker image, and updates ECS.
   # ---------------------------------------
   deploy:
     runs-on: ubuntu-latest
-    needs: [backend]  # or [frontend, backend] if you want both checks to complete before deploying
+    needs: [backend]
 
     # Only run this job IF it's a push event on main branch
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -99,12 +106,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Download Backend Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-build
+          path: ./backend  # Put the build folder back into ./backend
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1  
+          aws-region: us-east-1
 
       - name: Log in to Amazon ECR
         run: |
@@ -113,8 +126,7 @@ jobs:
 
       - name: Build Docker image
         working-directory: ./backend
-        run: |
-          docker build -t online-bookshelf-backend:latest .
+        run: docker build -t online-bookshelf-backend:latest .
 
       - name: Tag and push Docker image to ECR
         run: |
@@ -127,4 +139,3 @@ jobs:
           --cluster Page-Turners-ClusterX \
           --service page-turners-service \
           --force-new-deployment
-
