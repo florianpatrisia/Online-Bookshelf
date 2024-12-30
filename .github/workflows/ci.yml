@@ -1,12 +1,17 @@
 name: CI
 
 on:
+  # Triggers when you push to 'main'
   push:
     branches: [main]
+  # Triggers when a Pull Request is opened/updated against 'main'
   pull_request:
     branches: [main]
 
 jobs:
+  # ---------------------------------------
+  # 1) Basic setup job (runs on all events)
+  # ---------------------------------------
   setup:
     runs-on: ubuntu-latest
 
@@ -25,9 +30,12 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+  # ---------------------------------------
+  # 2) Frontend checks (runs on all events)
+  # ---------------------------------------
   frontend:
     runs-on: ubuntu-latest
-    needs: setup
+    needs: [setup]
 
     steps:
       - name: Checkout code
@@ -41,9 +49,12 @@ jobs:
         working-directory: ./frontend
         run: npm run lint && npm run format
 
+  # ---------------------------------------
+  # 3) Backend checks & Build JAR (runs on all events)
+  # ---------------------------------------
   backend:
     runs-on: ubuntu-latest
-    needs: setup
+    needs: [setup]
 
     steps:
       - name: Checkout code
@@ -53,7 +64,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '17'  
+          java-version: '17'
 
       - name: Set up Gradle cache
         uses: actions/cache@v3
@@ -68,6 +79,74 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./backend/gradlew
 
-      - name: Run Gradle format
+      - name: Run Gradle build
         working-directory: ./backend
-        run: ./gradlew format
+        run: ./gradlew build
+
+      - name: Debug list build/libs
+        run: ls -l build/libs
+        working-directory: ./backend
+
+      # Upload the entire build folder (including build/libs/*.jar)
+      - name: Upload Backend Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-build
+          path: ./backend/build  # Contains build/libs/backend-0.0.1-SNAPSHOT.jar
+
+  # ---------------------------------------
+  # 4) Deployment job (only on push to main)
+  #    This pulls the artifact from the backend job,
+  #    builds+pushes Docker image, and updates ECS.
+  # ---------------------------------------
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [backend]  
+
+    # Only run this job IF it's a push event on main branch
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Download the build artifacts into the exact same folder structure
+      # so the jar ends up at ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar
+      - name: Download Backend Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: backend-build
+          path: ./backend/build
+
+      - name: Debug list backend/build/libs
+        run: ls -l ./backend/build/libs
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region us-east-1 \
+          | docker login --username AWS --password-stdin 122610519658.dkr.ecr.us-east-1.amazonaws.com
+
+      # IMPORTANT: Docker context is the backend directory, 
+      # and the Dockerfile also references build/libs/backend-0.0.1-SNAPSHOT.jar
+      - name: Build Docker image
+        working-directory: ./backend
+        run: docker build -t online-bookshelf-backend:latest .
+
+      - name: Tag and push Docker image to ECR
+        run: |
+          docker tag online-bookshelf-backend:latest 122610519658.dkr.ecr.us-east-1.amazonaws.com/page-turners:latest
+          docker push 122610519658.dkr.ecr.us-east-1.amazonaws.com/page-turners:latest
+
+      - name: Update ECS service
+        run: |
+          aws ecs update-service \
+          --cluster Page-Turners-ClusterX \
+          --service page-turners-service \
+          --force-new-deployment
