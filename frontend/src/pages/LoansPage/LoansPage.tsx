@@ -70,6 +70,7 @@ const BookLoanListPage: React.FC = () => {
                             <tr>
                                 <th>#</th>
                                 <th>Book Name</th>
+                                <th>Book Author</th>
                                 <th>Days Left</th>
                                 <th>Actions</th>
                             </tr>
@@ -79,6 +80,7 @@ const BookLoanListPage: React.FC = () => {
                                 <tr key={index}>
                                     <td>{index + 1}</td>
                                     <td>{loan.book.title}</td>
+                                    <td>{loan.book.author}</td>
                                     <td>{loan.daysLeft}</td>
                                     <td>
                                         <Button

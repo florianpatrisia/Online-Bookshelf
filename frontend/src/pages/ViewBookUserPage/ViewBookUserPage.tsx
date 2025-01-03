@@ -94,7 +94,7 @@ const BookViewUserPage: React.FC = () => {
                 alert('This book is currently unavailable.')
                 return
             }
-
+            console.log('token ', token)
             await loanBook(Number(id!), token)
             setBook((prevBook) =>
                 prevBook

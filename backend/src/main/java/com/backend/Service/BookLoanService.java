@@ -10,6 +10,7 @@ import com.backend.Repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +94,7 @@ public class BookLoanService {
 		LocalDate today = LocalDate.now();
 
 		if (!returnDate.isBefore(today)) {
-			bookLoan.setReturnDate(today.plusDays(7).toString());
+			bookLoan.setReturnDate(returnDate.plusDays(7).toString());
 			bookLoanRepository.save(bookLoan);
 		}
 		else {
