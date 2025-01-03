@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react'
 import { Table, Spinner, Button } from 'react-bootstrap'
 import { useLoanBookContext } from '../../context/LoanBooksContext'
 import MyNavbar from '../../components/Navbar/Navbar'
