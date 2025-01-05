@@ -21,7 +21,7 @@ import java.util.Map;
 @Transactional
 public class PaymentService {
 
-	private PaymentRepository paymentRepository;
+	private final PaymentRepository paymentRepository;
 
 	public PaymentService(PaymentRepository paymentRepository, @Value("${stripe.key.secret}") String secretKey) {
 		this.paymentRepository = paymentRepository;
@@ -55,6 +55,5 @@ public class PaymentService {
 	public Payment getPaymentByUserId(Long userId) {
 		return paymentRepository.findByUserId(userId);
 	}
-
 
 }

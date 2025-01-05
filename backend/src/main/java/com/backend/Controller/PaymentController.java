@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/payment")
 public class PaymentController {
 
-	private PaymentService paymentService;
+	private final PaymentService paymentService;
 
 	public PaymentController(PaymentService paymentService) {
 		this.paymentService = paymentService;
