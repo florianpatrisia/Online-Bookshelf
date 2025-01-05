@@ -4,5 +4,7 @@ import com.backend.Model.Payment;
 import org.springframework.data.repository.CrudRepository;
 
 public interface PaymentRepository extends CrudRepository<Payment, Long> {
-    Payment findByUserId(Long userId);
+
+	Payment findByUserId(Long userId);
+
 }

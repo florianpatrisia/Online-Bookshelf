@@ -20,34 +20,36 @@ import java.util.Map;
 @Service
 @Transactional
 public class PaymentService {
-    private PaymentRepository paymentRepository;
 
-    public PaymentService(PaymentRepository paymentRepository, @Value("${stripe.key.secret}") String secretKey) {
-        this.paymentRepository = paymentRepository;
-        Stripe.apiKey = secretKey;
-    }
+	private PaymentRepository paymentRepository;
 
-    public PaymentIntent createPaymentIntent(PaymentInfoRequest paymentInfoRequest) throws StripeException {
-        List<String> paymentMethodTypes = new ArrayList<>();
-        paymentMethodTypes.add("card");
+	public PaymentService(PaymentRepository paymentRepository, @Value("${stripe.key.secret}") String secretKey) {
+		this.paymentRepository = paymentRepository;
+		Stripe.apiKey = secretKey;
+	}
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("amount", paymentInfoRequest.getAmount());
-        params.put("currency", paymentInfoRequest.getCurrency());
-        params.put("payment_method_types", paymentMethodTypes);
+	public PaymentIntent createPaymentIntent(PaymentInfoRequest paymentInfoRequest) throws StripeException {
+		List<String> paymentMethodTypes = new ArrayList<>();
+		paymentMethodTypes.add("card");
 
-        return PaymentIntent.create(params);
-    }
+		Map<String, Object> params = new HashMap<>();
+		params.put("amount", paymentInfoRequest.getAmount());
+		params.put("currency", paymentInfoRequest.getCurrency());
+		params.put("payment_method_types", paymentMethodTypes);
 
-    public ResponseEntity<String> stripePayment(Long userId) throws Exception {
-        Payment payment = paymentRepository.findByUserId(userId);
+		return PaymentIntent.create(params);
+	}
 
-        if (payment == null) {
-            throw new Exception("Payment information is missing");
-        }
+	public ResponseEntity<String> stripePayment(Long userId) throws Exception {
+		Payment payment = paymentRepository.findByUserId(userId);
 
-        payment.setAmount(00.00);
-        paymentRepository.save(payment);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
+		if (payment == null) {
+			throw new Exception("Payment information is missing");
+		}
+
+		payment.setAmount(00.00);
+		paymentRepository.save(payment);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
 }

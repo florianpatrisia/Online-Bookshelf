@@ -5,16 +5,18 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name="payments")
+@Table(name = "payments")
 public class Payment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long paymentId;
 
-    @Column(name = "user_id")
-    private Long userId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
+	private Long paymentId;
 
-    @Column(name = "amount")
-    private double amount;
+	@Column(name = "user_id")
+	private Long userId;
+
+	@Column(name = "amount")
+	private double amount;
+
 }

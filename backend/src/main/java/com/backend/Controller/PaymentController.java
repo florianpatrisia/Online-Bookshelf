@@ -13,26 +13,29 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
-    private PaymentService paymentService;
 
-    public PaymentController(PaymentService paymentService) {
-        this.paymentService = paymentService;
-    }
+	private PaymentService paymentService;
 
-    @PostMapping("/payment-intent")
-    public ResponseEntity<String> createPaymentIntent(@RequestBody PaymentInfoRequest paymentInfoRequest)
-            throws StripeException {
+	public PaymentController(PaymentService paymentService) {
+		this.paymentService = paymentService;
+	}
 
-        PaymentIntent paymentIntent = paymentService.createPaymentIntent(paymentInfoRequest);
-        String paymentStr = paymentIntent.toJson();
+	@PostMapping("/payment-intent")
+	public ResponseEntity<String> createPaymentIntent(@RequestBody PaymentInfoRequest paymentInfoRequest)
+			throws StripeException {
 
-        return new ResponseEntity<>(paymentStr, HttpStatus.OK);
-    }
+		PaymentIntent paymentIntent = paymentService.createPaymentIntent(paymentInfoRequest);
+		String paymentStr = paymentIntent.toJson();
 
-    @PutMapping("/payment-complete")
-    public ResponseEntity<String> stripePaymentComplete(@RequestHeader(value="Authorization") String token) throws Exception {
-        Long userId = ExtractJWT.getUserId(token);
+		return new ResponseEntity<>(paymentStr, HttpStatus.OK);
+	}
 
-        return paymentService.stripePayment(userId);
-    }
+	@PutMapping("/payment-complete")
+	public ResponseEntity<String> stripePaymentComplete(@RequestHeader(value = "Authorization") String token)
+			throws Exception {
+		Long userId = ExtractJWT.getUserId(token);
+
+		return paymentService.stripePayment(userId);
+	}
+
 }

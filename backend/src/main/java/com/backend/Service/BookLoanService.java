@@ -24,16 +24,17 @@ import java.util.Optional;
 public class BookLoanService {
 
 	private final BookRepository bookRepository;
+
 	private final BookLoanRepository bookLoanRepository;
+
 	private final UserRepository userRepository;
+
 	private final PaymentRepository paymentRepository;
 
 	private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-	public BookLoanService(BookRepository bookRepository,
-						   BookLoanRepository bookLoanRepository,
-						   UserRepository userRepository,
-						   PaymentRepository paymentRepository) {
+	public BookLoanService(BookRepository bookRepository, BookLoanRepository bookLoanRepository,
+			UserRepository userRepository, PaymentRepository paymentRepository) {
 		this.bookRepository = bookRepository;
 		this.bookLoanRepository = bookLoanRepository;
 		this.userRepository = userRepository;
@@ -156,8 +157,8 @@ public class BookLoanService {
 
 		for (Book book : books) {
 			Optional<BookLoan> bookLoan = bookLoans.stream()
-					.filter(bl -> bl.getBook().getBookId().equals(book.getBookId()))
-					.findFirst();
+				.filter(bl -> bl.getBook().getBookId().equals(book.getBookId()))
+				.findFirst();
 
 			if (bookLoan.isPresent()) {
 				LocalDate returnDate = LocalDate.parse(bookLoan.get().getReturnDate(), formatter);
@@ -165,9 +166,7 @@ public class BookLoanService {
 
 				// If returnDate is in the future or today, then the book is not overdue
 				if (!returnDate.isBefore(today)) {
-					currentLoansResponses.add(
-							new CurrentLoansResponse(book, Math.toIntExact(daysUntilDue))
-					);
+					currentLoansResponses.add(new CurrentLoansResponse(book, Math.toIntExact(daysUntilDue)));
 				}
 			}
 		}
@@ -183,4 +182,5 @@ public class BookLoanService {
 		BookLoan validateLoan = bookLoanRepository.findByUser_UserIdAndBook_BookId(userId, bookId);
 		return validateLoan != null;
 	}
+
 }
