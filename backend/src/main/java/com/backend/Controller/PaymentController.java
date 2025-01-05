@@ -1,6 +1,7 @@
 package com.backend.Controller;
 
 import com.backend.DTO.PaymentInfoRequest;
+import com.backend.Model.Payment;
 import com.backend.Service.PaymentService;
 import com.backend.Config.ExtractJWT;
 import com.stripe.exception.StripeException;
@@ -36,6 +37,15 @@ public class PaymentController {
 		Long userId = ExtractJWT.getUserId(token);
 
 		return paymentService.stripePayment(userId);
+	}
+
+	@GetMapping("/find-by-user-id")
+	public ResponseEntity<Payment> getPaymentByUserId(@RequestParam Long userId) {
+		Payment payment = paymentService.getPaymentByUserId(userId);
+		if (payment == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(payment, HttpStatus.OK);
 	}
 
 }

@@ -52,4 +52,9 @@ public class PaymentService {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
+	public Payment getPaymentByUserId(Long userId) {
+		return paymentRepository.findByUserId(userId);
+	}
+
+
 }
