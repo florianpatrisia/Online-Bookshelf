@@ -140,7 +140,8 @@ public class BookLoanService {
 
 		LocalDate returnDate = LocalDate.parse(bookLoan.getReturnDate(), formatter);
 		if (returnDate.isBefore(LocalDate.now())) {
-			throw new BookLoanException(HttpStatus.BAD_REQUEST, "Cannot renew loan. The return date has already passed.");
+			throw new BookLoanException(HttpStatus.BAD_REQUEST,
+					"Cannot renew loan. The return date has already passed.");
 		}
 
 		String newReturnDate = LocalDate.now().plusDays(7).format(formatter);
