@@ -1,0 +1,77 @@
+.mb-4 {
+    margin: 30px 0;
+    text-align: center;
+    color: var(--color-font-primary);
+    font-size: var(--size-font-m);
+    font-weight: normal;
+}
+
+.loading {
+    margin-top: 15rem;
+    font-size: var(--size-font-s);
+}
+
+.no-fees {
+    margin-top: 10rem;
+    font-size: 1rem;
+}
+
+.card-container {
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.my-card {
+    width: 600px !important;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    overflow: hidden;
+}
+
+.card-header {
+    color: var(--color-font-primary);
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 16px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+}
+
+.fee {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+#card-element {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    background-color: #f9f9f9;
+}
+
+.successful-payment {
+    width: 350px;
+    background-color: rgb(52, 244, 77);
+    color: var(--color-font-primary);
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 20px 0 -30px 0;
+}

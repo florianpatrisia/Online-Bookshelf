@@ -60,7 +60,7 @@ export function LoginPage() {
                     </div>
                     <div>
                         <input
-                            type="text"
+                            type="password"
                             placeholder="Password"
                             name="password"
                             className="input-password"

@@ -1,12 +1,20 @@
-.container {
+/* General container styling */
+/* .container {
     margin-top: 20px;
-}
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+} */
 
+/* Row adjustments for better layout */
 .row {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center; /* Center content horizontally */
+    /*gap: 1px; */
 }
 
+/* Image styling */
 .img-fluid {
     max-width: 100%;
     height: auto;
@@ -14,36 +22,49 @@
     border-radius: 8px;
 }
 
+/* Book title and author styling */
 .title {
-    text-align: left;
-    margin-bottom: 0.2rem;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
 }
 
 .author {
-    text-align: left;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 1.2rem;
     color: gray;
+    margin-top: 0;
+    margin-bottom: 1rem;
 }
 
+/* Description styling */
 .description {
-    text-align: left;
+    text-align: center;
     line-height: 1.5;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    max-width: 500px; /* Prevent description from being too wide */
 }
 
+/* Additional info section */
 .additional-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    text-align: center;
+    font-size: 1.1rem;
+    color: #333;
+    margin-top: 1.5rem;
 }
 
+/* Button styling */
 .btn-primary {
     background-color: var(--color-button-primary);
     color: white;
     border: none;
-    padding: 8px 16px;
+    padding: 10px 20px;
     cursor: pointer;
-    margin: 0.3rem;
+    margin: 0.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
 }
 
 .btn-primary:hover {
@@ -54,21 +75,64 @@
     background-color: #f8f9fa;
     color: #343a40;
     border: 1px solid #ced4da;
-    padding: 8px 16px;
+    padding: 10px 20px;
     cursor: pointer;
+    margin: 0.5rem;
+    border-radius: 4px;
+    font-size: 1rem;
 }
 
 .btn-light:hover {
     background-color: #e2e6ea;
 }
 
+/* Disabled button styling */
 .btn-primary:disabled {
     background-color: #cccccc;
     color: #666666;
     cursor: not-allowed;
     opacity: 0.7;
 }
+
+/* Loading state styling */
 .loading {
     margin-top: 15rem;
     font-size: var(--size-font-s);
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Card styling */
+
+/* Reviews section */
+.mt-4 {
+    margin-top: 2rem;
+}
+
+.review-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.review-card {
+    width: 100%;
+    max-width: 500px;
+    margin-bottom: 1rem;
+}
+
+.review-card .card-body {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.overdue-banner {
+    width: 550px;
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 1rem;
+    font-weight: bold;
+    margin: 20px 0 60px 0;
 }

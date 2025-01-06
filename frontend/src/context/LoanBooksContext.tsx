@@ -20,19 +20,12 @@ import { Book } from '../models/Book'
 export interface LoanBooksContext {
     currentLoans: CurrentLoansResponse[]
     fetchAndSetCurrentLoans: () => Promise<void>
-    loanBook: (
-        bookId: number,
-        token: string,
-        onError?: (error: string) => void
-    ) => Promise<void>
+    loanBook: (bookId: number) => Promise<void>
     returnBook: (
         bookId: number,
         onError?: (error: string) => void
     ) => Promise<void>
-    renewLoan: (
-        bookId: number,
-        onError?: (error: string) => void
-    ) => Promise<void>
+    renewLoan: (bookId: number) => Promise<void>
     isLoanedByUser: (
         bookId: number,
         onError?: (error: string) => void
@@ -65,9 +58,9 @@ export const LoanBookProvider: React.FC<{ children: ReactNode }> = ({
         const loadCurrentLoans = async () => {
             try {
                 if (token) {
-                    const loans = await fetchCurrentLoansService(token)
+                    const loans = await fetchCurrentLoansService()
                     setCurrentLoans(loans)
-                    const count = await fetchCurrentLoansCountService(token)
+                    const count = await fetchCurrentLoansCountService()
                     setCurrentLoansCount(count)
                 }
             } catch (error) {
@@ -81,30 +74,17 @@ export const LoanBookProvider: React.FC<{ children: ReactNode }> = ({
         loadCurrentLoans()
     }, [token])
 
-    const loanBook = async (
-        bookId: number,
-        token: string,
-        onError?: (error: string) => void
-    ): Promise<void> => {
-        try {
-            if (token) {
-                const newBookLoan: Book = await loanBookService(bookId, token)
-                const newLoan: CurrentLoansResponse = {
-                    bookId: newBookLoan.bookId,
-                    daysLeft: 7,
-                }
-                setCurrentLoans((prevLoans: CurrentLoansResponse[]) => [
-                    ...prevLoans,
-                    newLoan,
-                ])
+    const loanBook = async (bookId: number): Promise<void> => {
+        if (token) {
+            const newBookLoan: Book = await loanBookService(bookId)
+            const newLoan: CurrentLoansResponse = {
+                book: newBookLoan,
+                daysLeft: 7,
             }
-        } catch (error) {
-            const errorMessage =
-                error instanceof Error
-                    ? error.message
-                    : 'An unexpected error occurred.'
-            if (onError) onError(errorMessage)
-            setError(errorMessage)
+            setCurrentLoans((prevLoans: CurrentLoansResponse[]) => [
+                ...prevLoans,
+                newLoan,
+            ])
         }
     }
 
@@ -114,7 +94,7 @@ export const LoanBookProvider: React.FC<{ children: ReactNode }> = ({
     ): Promise<boolean> => {
         try {
             if (token) {
-                return await isBookLoanedByUserService(token, bookId)
+                return await isBookLoanedByUserService(bookId)
             }
             return false
         } catch (error) {
@@ -134,9 +114,11 @@ export const LoanBookProvider: React.FC<{ children: ReactNode }> = ({
     ): Promise<void> => {
         try {
             if (token) {
-                await returnBookService(token, bookId)
+                await returnBookService(bookId)
                 setCurrentLoans((prevLoans) =>
-                    prevLoans.filter((loan) => loan.book.bookId !== bookId)
+                    prevLoans.filter(
+                        (loan) => Number(loan.book.bookId) !== bookId
+                    )
                 )
             }
         } catch (error) {
@@ -149,32 +131,20 @@ export const LoanBookProvider: React.FC<{ children: ReactNode }> = ({
         }
     }
 
-    const renewLoan = async (
-        bookId: number,
-        onError?: (error: string) => void
-    ): Promise<void> => {
-        try {
-            if (token) {
-                await renewLoanService(token, bookId)
-                const loans = fetchCurrentLoansService(token)
-                console.log('aici ', loans)
-            }
-        } catch (error) {
-            const errorMessage =
-                error instanceof Error
-                    ? 'There was an error renewing the loan. Please try again later.'
-                    : 'An unexpected error occurred.'
-            if (onError) onError(errorMessage)
-            setError(errorMessage)
+    const renewLoan = async (bookId: number): Promise<void> => {
+        if (token) {
+            await renewLoanService(bookId)
+            const loans = fetchCurrentLoansService()
+            console.log('aici ', loans)
         }
     }
 
     const fetchAndSetCurrentLoans = async () => {
         try {
             if (token) {
-                const loans = await fetchCurrentLoansService(token)
+                const loans = await fetchCurrentLoansService()
                 setCurrentLoans(loans)
-                const count = await fetchCurrentLoansCountService(token)
+                const count = await fetchCurrentLoansCountService()
                 setCurrentLoansCount(count)
             }
         } catch (error) {

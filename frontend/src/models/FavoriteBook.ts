@@ -1,5 +1,7 @@
+import { Book } from './Book.ts'
+
 export interface FavoriteBook {
     id?: number
     userId: number
-    bookId: number
+    book: Book
 }

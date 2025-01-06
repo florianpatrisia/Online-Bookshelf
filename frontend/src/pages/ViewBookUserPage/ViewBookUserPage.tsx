@@ -15,6 +15,8 @@ import { Button, Card, Form } from 'react-bootstrap'
 import { useAuthContext } from '../../context/AuthContext'
 import { useFavoriteBookContext } from '../../context/FavoriteBooksContext.tsx'
 import { useLoanBookContext } from '../../context/LoanBooksContext'
+import { AxiosError } from 'axios'
+import { usePaymentContext } from '../../context/PaymentContext.tsx'
 
 const BookViewUserPage: React.FC = () => {
     const { id } = useParams<{ id: string }>()
@@ -29,8 +31,12 @@ const BookViewUserPage: React.FC = () => {
     const [newDescription, setNewDescription] = useState<string>('')
     const [isFavoriteBook, setIsFavoriteBook] = useState<boolean>(false)
     const [isLoaned, setIsLoaned] = useState<boolean>(false)
-    const { user, token } = useAuthContext()
+    const { user } = useAuthContext()
     const { loanBook, isLoanedByUser } = useLoanBookContext()
+    const { currentLoans } = useLoanBookContext()
+    const overdueLoans = currentLoans.some((loan) => loan.daysLeft <= 0)
+    const [hasOverdue, setHasOverdue] = useState<boolean>(false)
+    const { fees } = usePaymentContext()
 
     useEffect(() => {
         const fetchBook = async () => {
@@ -49,6 +55,8 @@ const BookViewUserPage: React.FC = () => {
 
                 const loaned = await isLoanedByUser(Number(id!))
                 setIsLoaned(loaned)
+
+                if (overdueLoans) setHasOverdue(true)
             } catch (error) {
                 if (error instanceof Error) {
                     setError(error.message)
@@ -60,7 +68,7 @@ const BookViewUserPage: React.FC = () => {
             }
         }
         fetchBook()
-    }, [id, loadReviewsByBookId, isFavorite, isLoanedByUser])
+    }, [id, loadReviewsByBookId, isFavorite, isLoanedByUser, overdueLoans])
 
     const handleFavoriteClick = async () => {
         if (isFavoriteBook) {
@@ -94,8 +102,7 @@ const BookViewUserPage: React.FC = () => {
                 alert('This book is currently unavailable.')
                 return
             }
-            console.log('token ', token)
-            await loanBook(Number(id!), token)
+            await loanBook(Number(id!))
             setBook((prevBook) =>
                 prevBook
                     ? {
@@ -106,7 +113,13 @@ const BookViewUserPage: React.FC = () => {
             )
             setIsLoaned(true)
         } catch (error) {
-            if (error instanceof Error) {
+            if (error instanceof AxiosError && error.response) {
+                if (error.response.data === 'Outstanding fees') {
+                    alert(
+                        'You have outstanding fees! You cannot loan any more books until you pay the fees.'
+                    )
+                }
+            } else if (error instanceof Error) {
                 setError(error.message)
             } else {
                 setError('Failed to loan the book.')
@@ -142,7 +155,6 @@ const BookViewUserPage: React.FC = () => {
                 description: newDescription.trim(),
                 date: new Date().toISOString().split('T')[0],
             }
-            console.log('Review: ', review)
 
             await addReview(review)
             await loadReviewsByBookId(id!)
@@ -163,6 +175,14 @@ const BookViewUserPage: React.FC = () => {
         <div className="container mt-5">
             <MyNavbar />
             <br />
+            <div className="row">
+                {(overdueLoans || fees != 0) && (
+                    <div className="overdue-banner">
+                        Return your last book(s) and/or pay your fee to loan
+                        more books
+                    </div>
+                )}
+            </div>
             <div className="row">
                 <div className="col-md-4">
                     <img
@@ -190,7 +210,7 @@ const BookViewUserPage: React.FC = () => {
                         <button
                             className="btn btn-primary"
                             onClick={handleLoanBook}
-                            disabled={isLoaned}
+                            disabled={isLoaned || hasOverdue || fees != 0}
                         >
                             {isLoaned ? 'You already loan this book' : 'Loan'}
                         </button>

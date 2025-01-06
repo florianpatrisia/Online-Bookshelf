@@ -1,4 +1,6 @@
+import { Book } from './Book.ts'
+
 export interface CurrentLoansResponse {
-    bookId: string
+    book: Book
     daysLeft: number
 }

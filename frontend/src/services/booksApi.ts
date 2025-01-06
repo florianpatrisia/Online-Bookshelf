@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom'
 import { Book } from '../models/Book.ts'
 import { API_BASE_URL, axiosInstance } from './authApi.ts'
 import { AxiosResponse } from 'axios'
@@ -79,39 +78,35 @@ export const searchBooksByTitle = async (query: string): Promise<Book[]> => {
 }
 
 export const useFetchBooks = () => {
-    const navigate = useNavigate()
-
     const fetchBooksByCategory = async (category: string) => {
-        const token = localStorage.getItem('token')
-
-        if (!token) {
-            navigate('/pageTurner')
-            return
-        }
-
         const headers = {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
         }
 
-        const response = await fetch(
-            `http://localhost:8080/api/books/filter/category?category=${category}`,
-            {
-                method: 'GET',
-                headers,
-            }
-        )
+        try {
+            const response = await fetch(
+                `http://localhost:8080/api/books/filter/category?category=${encodeURIComponent(category)}`,
+                {
+                    method: 'GET',
+                    headers,
+                }
+            )
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                localStorage.removeItem('token')
-                navigate('/pageTurner')
-                return
+            if (!response.ok) {
+                if (response.status === 401) {
+                    localStorage.removeItem('token')
+                }
+
+                throw new Error(
+                    `Failed to fetch books: ${response.status} ${response.statusText}`
+                )
             }
-            throw new Error(`Failed to fetch books: ${response.status}`)
+
+            return await response.json()
+        } catch (error) {
+            console.error('Error fetching books by category:', error)
+            throw error
         }
-
-        return response.json()
     }
 
     return { fetchBooksByCategory }

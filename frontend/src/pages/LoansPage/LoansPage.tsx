@@ -1,6 +1,9 @@
-import { Table, Spinner, Button } from 'react-bootstrap'
+import { Table, Button } from 'react-bootstrap'
 import { useLoanBookContext } from '../../context/LoanBooksContext'
 import MyNavbar from '../../components/Navbar/Navbar'
+import { useEffect, useState } from 'react'
+import './LoansPage.css'
+import { AxiosError } from 'axios'
 
 const BookLoanListPage: React.FC = () => {
     const {
@@ -10,6 +13,16 @@ const BookLoanListPage: React.FC = () => {
         returnBook,
         fetchAndSetCurrentLoans,
     } = useLoanBookContext()
+    const [isLoading, setIsLoading] = useState(true)
+    const [overdueMessage, setOverdueMessage] = useState(false)
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsLoading(false)
+        }, 1000)
+
+        return () => clearTimeout(timer)
+    }, [])
 
     const refreshLoans = async () => {
         try {
@@ -21,35 +34,32 @@ const BookLoanListPage: React.FC = () => {
 
     const handleRenew = async (bookId: number) => {
         try {
-            await renewLoan(bookId, (err) => {
-                console.log(`Failed to renew bookId ${bookId}: ${err}`)
-            })
+            await renewLoan(bookId)
             console.log(`Successfully renewed bookId: ${bookId}`)
             await refreshLoans()
-        } catch (err) {
-            console.error(`Error renewing loan for bookId ${bookId}:`, err)
+        } catch (error) {
+            if (error instanceof AxiosError && error.response) {
+                alert(error.response.data)
+            }
         }
     }
 
-    const handleRestore = async (bookId: number) => {
+    const handleRestore = async (bookId: number, daysLeft: number) => {
         try {
             await returnBook(bookId, (err) => {
                 console.log(`Failed to restore bookId ${bookId}: ${err}`)
             })
+            if (daysLeft < 0) {
+                setOverdueMessage(true)
+            }
             console.log(`Successfully restored bookId: ${bookId}`)
         } catch (err) {
             console.error(`Error restoring loan for bookId ${bookId}:`, err)
         }
     }
-    if (!currentLoans || currentLoans.length === 0) {
-        return (
-            <div className="loading-container">
-                <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </Spinner>
-                <p className="text-center mt-3">No books loan found.</p>
-            </div>
-        )
+
+    if (isLoading) {
+        return <div className="loading">Loading...</div>
     }
 
     if (error) {
@@ -59,9 +69,17 @@ const BookLoanListPage: React.FC = () => {
     return (
         <div className="container mt-5">
             <MyNavbar />
-            <h1 className="text-center mb-4">Book Loans</h1>
-            {currentLoans.length === 0 ? (
-                <p className="text-center">No book loans available.</p>
+            <h1 className="mb-4">Book Loans</h1>
+            <div className="row">
+                {overdueMessage && (
+                    <div className="overdue-message">
+                        This loan was overdue. Please check your account for any
+                        fees and pay them in order to loan more books.
+                    </div>
+                )}
+            </div>
+            {currentLoans !== undefined && currentLoans.length === 0 ? (
+                <div className="no-loaned-books">No book loans available!</div>
             ) : (
                 <>
                     <Table striped bordered hover>
@@ -70,36 +88,57 @@ const BookLoanListPage: React.FC = () => {
                                 <th>#</th>
                                 <th>Book Name</th>
                                 <th>Book Author</th>
-                                <th>Days Left</th>
+                                <th>Days Left/ Overdue</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {currentLoans.map((loan, index) => (
-                                <tr key={index}>
-                                    <td>{index + 1}</td>
-                                    <td>{loan.book.title}</td>
-                                    <td>{loan.book.author}</td>
-                                    <td>{loan.daysLeft}</td>
-                                    <td>
-                                        <Button
-                                            className="me-2"
-                                            onClick={() =>
-                                                handleRenew(loan.book.bookId)
+                            {currentLoans.map((loan, index) => {
+                                const isOverdue = loan.daysLeft < 0
+                                const days = Math.abs(loan.daysLeft)
+
+                                return (
+                                    <tr key={index}>
+                                        <td>{index + 1}</td>
+                                        <td>{loan.book.title}</td>
+                                        <td>{loan.book.author}</td>
+                                        <td
+                                            className={
+                                                isOverdue ? 'text-danger' : ''
                                             }
                                         >
-                                            Renew
-                                        </Button>
-                                        <Button
-                                            onClick={() =>
-                                                handleRestore(loan.book.bookId)
-                                            }
-                                        >
-                                            Restore
-                                        </Button>
-                                    </td>
-                                </tr>
-                            ))}
+                                            {isOverdue
+                                                ? `${days} days overdue`
+                                                : `${days} days left`}
+                                        </td>
+                                        <td>
+                                            <Button
+                                                className="me-2"
+                                                onClick={() =>
+                                                    handleRenew(
+                                                        Number(loan.book.bookId)
+                                                    )
+                                                }
+                                                disabled={loan.daysLeft <= 0}
+                                            >
+                                                Renew
+                                            </Button>
+                                            <Button
+                                                onClick={() =>
+                                                    handleRestore(
+                                                        Number(
+                                                            loan.book.bookId
+                                                        ),
+                                                        loan.daysLeft
+                                                    )
+                                                }
+                                            >
+                                                Return
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
                         </tbody>
                     </Table>
                 </>

@@ -1,6 +1,7 @@
 package com.backend.Service;
 
 import com.backend.DTO.CurrentLoansResponse;
+import com.backend.Exceptions.BookLoanException;
 import com.backend.Model.Book;
 import com.backend.Model.BookLoan;
 import com.backend.Model.Payment;
@@ -9,6 +10,7 @@ import com.backend.Repository.BookLoanRepository;
 import com.backend.Repository.BookRepository;
 import com.backend.Repository.PaymentRepository;
 import com.backend.Repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -78,7 +80,7 @@ public class BookLoanService {
 
 		// If there's an outstanding fee or an overdue book, throw an exception
 		if ((userPayment != null && userPayment.getAmount() > 0) || (userPayment != null && bookNeedsReturned)) {
-			throw new Exception("Outstanding fees");
+			throw new BookLoanException(HttpStatus.BAD_REQUEST, "Outstanding fees");
 		}
 
 		// If the user does not have a payment record, create one
@@ -138,7 +140,7 @@ public class BookLoanService {
 
 		LocalDate returnDate = LocalDate.parse(bookLoan.getReturnDate(), formatter);
 		if (returnDate.isBefore(LocalDate.now())) {
-			throw new Exception("Cannot renew loan. The return date has already passed.");
+			throw new BookLoanException(HttpStatus.BAD_REQUEST, "Cannot renew loan. The return date has already passed.");
 		}
 
 		String newReturnDate = LocalDate.now().plusDays(7).format(formatter);
@@ -163,11 +165,7 @@ public class BookLoanService {
 			if (bookLoan.isPresent()) {
 				LocalDate returnDate = LocalDate.parse(bookLoan.get().getReturnDate(), formatter);
 				long daysUntilDue = ChronoUnit.DAYS.between(today, returnDate);
-
-				// If returnDate is in the future or today, then the book is not overdue
-				if (!returnDate.isBefore(today)) {
-					currentLoansResponses.add(new CurrentLoansResponse(book, Math.toIntExact(daysUntilDue)));
-				}
+				currentLoansResponses.add(new CurrentLoansResponse(book, Math.toIntExact(daysUntilDue)));
 			}
 		}
 

@@ -130,11 +130,11 @@ const MyNavbar: React.FC = () => {
                     <Nav.Link href="/favorites" className="nav-link">
                         Favorite Books
                     </Nav.Link>
-                    <Nav.Link href="#my-account" className="nav-link">
-                        My Account
-                    </Nav.Link>
                     <Nav.Link href="/loans" className="nav-link">
-                        Loans Books
+                        Loaned Books
+                    </Nav.Link>
+                    <Nav.Link href="/fees" className="nav-link">
+                        Fees
                     </Nav.Link>
 
                     {user ? (

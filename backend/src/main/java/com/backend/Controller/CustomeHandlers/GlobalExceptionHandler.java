@@ -1,5 +1,6 @@
 package com.backend.Controller.CustomeHandlers;
 
+import com.backend.Exceptions.BookLoanException;
 import com.backend.Exceptions.ReviewException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,11 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ReviewException.class)
 	public ResponseEntity<String> handleReviewException(ReviewException ex) {
+		return ResponseEntity.status(ex.getErrorCode()).body(ex.getErrorMessage());
+	}
+
+	@ExceptionHandler(BookLoanException.class)
+	public ResponseEntity<String> handleBookLoanException(BookLoanException ex) {
 		return ResponseEntity.status(ex.getErrorCode()).body(ex.getErrorMessage());
 	}
 
