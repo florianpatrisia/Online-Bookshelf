@@ -39,6 +39,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
                   isAdmin: JSON.parse(atob(token.split('.')[1])).roles.includes(
                       'ROLE_ADMIN'
                   ),
+                  email: JSON.parse(atob(token.split('.')[1])).email,
               }
             : null
     )

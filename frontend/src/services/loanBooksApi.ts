@@ -1,118 +1,68 @@
-import { AxiosRequestConfig } from 'axios'
+import { AxiosResponse } from 'axios'
 import { axiosInstance } from './authApi'
 import { CurrentLoansResponse } from '../models/CurrentLoansResponse'
 import { Book } from '../models/Book'
 
-const handleAxiosResponse = (response) => {
-    if (response.status !== 200) {
-        throw new Error('Failed to fetch data')
+const handleAxiosResponse = (response: AxiosResponse) => {
+    if (response.status < 200 || response.status >= 300) {
+        console.log('here', response.data)
+        throw new Error(
+            `HTTP Error: ${response.status} ${response.statusText} - ${JSON.stringify(response.data)}`
+        )
     }
-    return response.data
+    if (response.headers['content-type']?.includes('application/json')) {
+        return response.data
+    } else {
+        return response.data
+    }
 }
 
-export const fetchCurrentLoansService = async (
-    token: string
-): Promise<CurrentLoansResponse[]> => {
-    const config: AxiosRequestConfig = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    }
+export const fetchCurrentLoansService = async (): Promise<
+    CurrentLoansResponse[]
+> => {
+    const response = await axiosInstance.get('/api/book-loans/current-loans')
+    return handleAxiosResponse(response)
+}
 
+export const fetchCurrentLoansCountService = async (): Promise<number> => {
     const response = await axiosInstance.get(
-        '/api/book-loans/current-loans',
-        config
+        '/api/book-loans/current-loans-count'
     )
     return handleAxiosResponse(response)
 }
 
-export const fetchCurrentLoansCountService = async (
-    token: string
-): Promise<number> => {
-    const config: AxiosRequestConfig = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    }
-
-    const response = await axiosInstance.get(
-        '/api/book-loans/current-loans-count',
-        config
-    )
-    return handleAxiosResponse(response)
-}
-
-export const loanBookService = async (
-    bookId: number,
-    token: string
-): Promise<Book> => {
-    const config: AxiosRequestConfig = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    }
-    const response = await axiosInstance.put(
-        `/api/book-loans/loan/${bookId}`,
-        config
-    )
+export const loanBookService = async (bookId: number): Promise<Book> => {
+    const response = await axiosInstance.put(`/api/book-loans/loan/${bookId}`)
+    console.log('here', response.data)
     return handleAxiosResponse(response)
 }
 
 export const isBookLoanedByUserService = async (
-    token: string,
     bookId: number
 ): Promise<boolean> => {
-    const config: AxiosRequestConfig = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        params: {
-            bookId,
-        },
-    }
     const response = await axiosInstance.get(
-        '/api/book-loans/is-loaned-by-user',
-        config
+        `/api/book-loans/is-loaned-by-user`,
+        {
+            params: { bookId },
+        }
     )
     return handleAxiosResponse(response)
 }
 
-export const returnBookService = async (
-    token: string,
-    bookId: number
-): Promise<void> => {
-    const config: AxiosRequestConfig = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        params: {
-            bookId,
-        },
-    }
-    const response = await axiosInstance.put(
-        '/api/book-loans/return',
-        null,
-        config
-    )
+export const returnBookService = async (bookId: number): Promise<void> => {
+    const response = await axiosInstance.put(`/api/book-loans/return`, null, {
+        params: { bookId },
+    })
     await handleAxiosResponse(response)
 }
 
-export const renewLoanService = async (
-    token: string,
-    bookId: number
-): Promise<void> => {
-    const config: AxiosRequestConfig = {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        params: {
-            bookId,
-        },
-    }
+export const renewLoanService = async (bookId: number): Promise<void> => {
     const response = await axiosInstance.put(
         '/api/book-loans/renew-loan',
         null,
-        config
+        {
+            params: { bookId },
+        }
     )
     await handleAxiosResponse(response)
 }

@@ -10,7 +10,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ adminOnly = false }) => {
     const { isAuthenticated, user } = useAuthContext()
 
     if (!isAuthenticated || !user) {
-        return <Navigate to="/login" />
+        return <Navigate to="/pageTurner" />
     }
 
     if (adminOnly && !user.isAdmin) {

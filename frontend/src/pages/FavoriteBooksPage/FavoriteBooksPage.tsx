@@ -7,17 +7,17 @@ import { useEffect, useState } from 'react'
 export function FavoriteBooksPage() {
     const { favoriteBooks } = useFavoriteBookContext()
 
-    const [isLoading, setIsLoading] = useState(true)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            setIsLoading(false)
-        }, 500)
+            setLoading(false)
+        }, 1000)
 
         return () => clearTimeout(timer)
     }, [])
 
-    if (isLoading) {
+    if (loading) {
         return <div className="loading">Loading...</div>
     }
 

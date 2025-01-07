@@ -44,6 +44,7 @@ public class TokenService {
 			.subject(authentication.getName())
 			.claim("roles", roles)
 			.claim("userId", user.getUserId())
+			.claim("email", user.getEmail())
 			.build();
 
 		return new TokenResponse(this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue());
