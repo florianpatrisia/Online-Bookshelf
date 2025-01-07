@@ -191,17 +191,18 @@ const BookViewUserPage: React.FC = () => {
                         className="img-fluid"
                     />
                 </div>
-                <div className="col-md-4">
-                    <h2 className="title">{book!.title}</h2>
-                    <h5 className="author">{book!.author}</h5>
-                    <p className="description">{book!.description}</p>
-                </div>
+
                 <div className="col-md-4 d-flex flex-column justify-content-center align-items-center">
+                    <div className="col-md-4">
+                        <h2 className="title">{book!.title}</h2>
+                        <h5 className="author">{book!.author}</h5>
+                    </div>
                     <p>
                         <strong>Category:</strong> {book.category}
                     </p>
                     <p>
-                        <strong>Price:</strong> ${book.price.toFixed(2)}
+                        <strong>Bookstore Price:</strong> $
+                        {book.price.toFixed(2)}
                     </p>
                     <p>
                         <strong>Available Count:</strong> {book.availableCount}
@@ -228,6 +229,11 @@ const BookViewUserPage: React.FC = () => {
                         </button>
                     </div>
                 </div>
+                <>
+                    <p className="description">
+                        <strong>Description:</strong> {book!.description}
+                    </p>
+                </>
             </div>
             {/* General Rating and Add Review Section */}
             <div className="mt-4 row">

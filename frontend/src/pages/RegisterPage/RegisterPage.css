@@ -1,33 +1,85 @@
-.form-register {
-    margin-top: 8%;
-    margin-left: 30%;
-    height: 500px;
-    width: 500px;
-    border: 0.2rem solid;
+body {
+    font-family: var(--font-primary);
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #e3f2fd, #aa94f7);
+    /* Applying gradient to the entire page */
+    min-height: 100vh; /* Ensure it covers full viewport height */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
-    border-color: var(--color-button-primary);
-    border-radius: 0.1rem;
+.register-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
 }
+
+.form-register {
+    background-color: var(--color-accent);
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
 .legend {
-    margin-top: 2.5rem;
-    font-size: var(--size-font-s);
+    font-size: var(--font-size-large);
     font-weight: bold;
-    color: var(--color-button-primary);
+    color: var(--color-primary);
+    margin-bottom: 20px;
 }
-.input-username,
-.input-email,
-.input-password {
-    margin-top: 4rem;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    width: 300px;
+
+.input-field {
+    display: block;
+    width: 100%;
+    margin: 15px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: var(--font-size-medium);
+    outline: none;
+    transition: border-color 0.3s ease;
 }
+
+.input-field:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+.error-message {
+    color: var(--color-error);
+    font-size: var(--font-size-medium);
+    margin-top: 10px;
+}
+
 .btn-create {
-    margin-top: 4rem;
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    font-size: var(--font-size-medium);
+    font-weight: bold;
+    color: var(--color-accent);
+    background-color: var(--color-primary);
     border: none;
-    border-radius: 0.1rem;
-    padding: 0.5rem;
-    background-color: var(--color-button-primary);
-    color: var(--color-background-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition:
+        background-color 0.3s ease,
+        transform 0.2s ease;
+}
+
+.btn-create:disabled {
+    background-color: #a6c8f5;
+    cursor: not-allowed;
+}
+
+.btn-create:hover {
+    background-color: var(--color-button-secondary);
+    transform: scale(1.02);
 }

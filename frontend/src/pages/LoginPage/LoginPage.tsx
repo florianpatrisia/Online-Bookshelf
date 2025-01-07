@@ -18,6 +18,7 @@ export function LoginPage() {
         e.preventDefault()
 
         try {
+            setLoading(true)
             await login(username, password)
             navigate('/')
         } catch (error) {
@@ -43,42 +44,40 @@ export function LoginPage() {
     }
 
     return (
-        <>
-            <form onSubmit={submitHandler} name="register-form-login">
-                <fieldset className="form-register-login">
-                    <legend className="legend">Sign In</legend>
-                    <div>
-                        <input
-                            type="text"
-                            placeholder="Username"
-                            name="username"
-                            className="input-username"
-                            required
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            name="password"
-                            className="input-password"
-                            required
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-                    {error && <div className="error-message">{error}</div>}
-                    <button
-                        type="submit"
-                        className="btn-create"
-                        disabled={loading}
-                    >
-                        {loading ? 'Logging in...' : 'Log in'}
-                    </button>
-                </fieldset>
+        <div className="login-page">
+            <form
+                onSubmit={submitHandler}
+                name="login-form"
+                className="form-login"
+            >
+                <legend className="legend">Sign In to Your Account</legend>
+                <div>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        name="username"
+                        className="input-field"
+                        required
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        className="input-field"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
+                {error && <div className="error-message">{error}</div>}
+                <button type="submit" className="btn-login" disabled={loading}>
+                    {loading ? 'Logging in...' : 'Log In'}
+                </button>
             </form>
-        </>
+        </div>
     )
 }

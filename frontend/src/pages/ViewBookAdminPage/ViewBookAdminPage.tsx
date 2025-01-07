@@ -101,18 +101,17 @@ const BookViewAdminPage: React.FC = () => {
                     />
                 </div>
 
-                <div className="col-md-4">
-                    <h2 className="title">{book!.title}</h2>
-                    <h5 className="author">{book!.author}</h5>
-                    <p className="description">{book!.description}</p>
-                </div>
-
                 <div className="col-md-4 additional-info">
+                    <div className="col-md-4">
+                        <h2 className="title">{book!.title}</h2>
+                        <h5 className="author">{book!.author}</h5>
+                    </div>
                     <p>
                         <strong>Category:</strong> {book!.category}
                     </p>
                     <p>
-                        <strong>Price:</strong> ${book!.price.toFixed(2)}
+                        <strong>Bookstore Price:</strong> $
+                        {book!.price.toFixed(2)}
                     </p>
                     <p>
                         <strong>Available Count:</strong> {book!.availableCount}
@@ -130,6 +129,11 @@ const BookViewAdminPage: React.FC = () => {
                         Delete this Book
                     </button>
                 </div>
+                <>
+                    <p className="description">
+                        <strong>Description:</strong> {book!.description}
+                    </p>
+                </>
             </div>
 
             {/* General Rating Section */}

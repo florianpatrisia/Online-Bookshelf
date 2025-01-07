@@ -1,28 +1,17 @@
-/* General container styling */
-/* .container {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-} */
-
-/* Row adjustments for better layout */
 .row {
     display: flex;
     flex-wrap: wrap;
-    justify-content: center; /* Center content horizontally */
-    /*gap: 1px; */
+    justify-content: center;
 }
 
-/* Image styling */
 .img-fluid {
     max-width: 100%;
     height: auto;
     width: 300px;
     border-radius: 8px;
+    margin-bottom: 20px;
 }
 
-/* Book title and author styling */
 .title {
     text-align: center;
     font-size: 2rem;
@@ -38,24 +27,24 @@
     margin-bottom: 1rem;
 }
 
-/* Description styling */
 .description {
     text-align: center;
     line-height: 1.5;
     font-size: 1rem;
     margin-bottom: 1.5rem;
-    max-width: 500px; /* Prevent description from being too wide */
+    max-width: 500px;
 }
 
-/* Additional info section */
 .additional-info {
     text-align: center;
     font-size: 1.1rem;
     color: #333;
     margin-top: 1.5rem;
 }
-
-/* Button styling */
+.additional-info p {
+    margin: 5px 0;
+    font-size: 1rem;
+}
 .btn-primary {
     background-color: var(--color-button-primary);
     color: white;
@@ -86,7 +75,6 @@
     background-color: #e2e6ea;
 }
 
-/* Disabled button styling */
 .btn-primary:disabled {
     background-color: #cccccc;
     color: #666666;
@@ -94,7 +82,6 @@
     opacity: 0.7;
 }
 
-/* Loading state styling */
 .loading {
     margin-top: 15rem;
     font-size: var(--size-font-s);
@@ -102,9 +89,6 @@
     font-weight: bold;
 }
 
-/* Card styling */
-
-/* Reviews section */
 .mt-4 {
     margin-top: 2rem;
 }
