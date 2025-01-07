@@ -19,6 +19,7 @@ export function RegisterPage() {
         e.preventDefault()
 
         try {
+            setLoading(true)
             await signup({ username, email, password })
             navigate('/login')
         } catch (error) {
@@ -44,53 +45,51 @@ export function RegisterPage() {
     }
 
     return (
-        <>
-            <form onSubmit={submitHandler} name="register-form">
-                <fieldset className="form-register">
-                    <legend className="legend">Create a new account</legend>
-                    <div>
-                        <input
-                            type="text"
-                            placeholder="Username"
-                            name="username"
-                            className="input-username"
-                            required
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type="text"
-                            placeholder="Email"
-                            name="email"
-                            className="input-email"
-                            required
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type="text"
-                            placeholder="Password"
-                            name="password"
-                            className="input-password"
-                            required
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                        />
-                    </div>
-                    {error && <div className="error-message">{error}</div>}
-                    <button
-                        type="submit"
-                        className="btn-create"
-                        disabled={loading}
-                    >
-                        {loading ? 'Signing up...' : 'Sign up'}
-                    </button>
-                </fieldset>
+        <div className="register-page">
+            <form
+                onSubmit={submitHandler}
+                name="register-form"
+                className="form-register"
+            >
+                <legend className="legend">Create a New Account</legend>
+                <div>
+                    <input
+                        type="text"
+                        placeholder="Username"
+                        name="username"
+                        className="input-field"
+                        required
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        name="email"
+                        className="input-field"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                </div>
+                <div>
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        className="input-field"
+                        required
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                </div>
+                {error && <div className="error-message">{error}</div>}
+                <button type="submit" className="btn-create" disabled={loading}>
+                    {loading ? 'Signing up...' : 'Sign Up'}
+                </button>
             </form>
-        </>
+        </div>
     )
 }

@@ -1,3 +1,9 @@
+.bookshelf-title {
+    margin: 60px 0;
+    text-align: center;
+    color: var(--color-font-primary);
+    font-size: var(--size-font-m);
+}
 .card-grid {
     display: flex;
     align-items: center;

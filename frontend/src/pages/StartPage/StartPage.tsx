@@ -1,4 +1,3 @@
-import Logo from '../../assets/Logo.jpg'
 import './StartPage.css'
 import '../../utils/reset.css'
 import { useNavigate } from 'react-router-dom'
@@ -6,36 +5,31 @@ import { useNavigate } from 'react-router-dom'
 export function StartPage() {
     const navigate = useNavigate()
     return (
-        <>
-            <img src={Logo} alt="Page Turner Logo" className="logo" />
-            <div className="container-into">
-                <h1 className="banner-welcoming ">
-                    Welcome back! Enjoy the best experience
-                </h1>
-                <h2 className="banner-info">
+        <div className="start-page">
+            <div className="intro-container">
+                <h1 className="welcome-banner">Welcome back!</h1>
+                <p className="info-banner">
                     Sign in to access your virtual library, manage your borrowed
                     books, and purchase your favorites. Your next great read is
                     just a login away.
-                </h2>
+                </p>
             </div>
-            <div className="container-register">
+            <div className="button-container">
                 <button
                     type="button"
-                    className="btn-register"
+                    className="btn register-btn"
                     onClick={() => navigate('/register')}
                 >
                     Register
                 </button>
-            </div>
-            <div className="container-login">
                 <button
                     type="button"
-                    className="btn-login"
+                    className="btn login-btn"
                     onClick={() => navigate('/login')}
                 >
                     Login
                 </button>
             </div>
-        </>
+        </div>
     )
 }

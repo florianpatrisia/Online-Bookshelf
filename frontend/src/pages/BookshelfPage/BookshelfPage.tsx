@@ -25,7 +25,7 @@ export function BookshelfPage() {
         <>
             <MyNavbar />
             <div className="container mt-5">
-                <h1 className="mb-4">Bookshelf</h1>
+                <h1 className="bookshelf-title">Bookshelf</h1>
                 {user && user.isAdmin && (
                     <Link to="/add-book" className="btn btn-primary add-btn">
                         Add Book

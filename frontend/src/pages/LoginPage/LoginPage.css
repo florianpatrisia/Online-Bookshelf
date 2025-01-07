@@ -1,34 +1,84 @@
-.form-register-login {
-    margin-top: 8%;
-    margin-left: 30%;
-    height: 450px;
-    width: 450px;
-    border: 0.2rem solid;
-
-    border-color: var(--color-button-primary);
-    border-radius: 0.1rem;
+body {
+    font-family: var(--font-primary);
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #e3f2fd, #aa94f7);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+.form-login {
+    background-color: #ffffff;
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
 .legend {
-    margin-top: 2.5rem;
-    font-size: var(--size-font-s);
+    font-size: 1.8rem;
     font-weight: bold;
-    color: var(--color-button-primary);
+    color: var(--color-primary);
+    margin-bottom: 20px;
 }
 
-.input-username,
-.input-password {
-    margin-top: 4rem;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    width: 300px;
+.input-field {
+    display: block;
+    width: 100%;
+    margin: 15px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.3s ease;
 }
 
-.btn-create {
-    margin-top: 4rem;
+.input-field:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+.error-message {
+    color: #ff6b6b;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+.btn-login {
+    display: block;
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: var(--color-primary);
     border: none;
-    border-radius: 0.1rem;
-    padding: 0.5rem;
-    background-color: var(--color-button-primary);
-    color: var(--color-background-primary);
+    border-radius: 5px;
+    cursor: pointer;
+    transition:
+        background-color 0.3s ease,
+        transform 0.2s ease;
+}
+
+.btn-login:disabled {
+    background-color: #a6c8f5;
+    cursor: not-allowed;
+}
+
+.btn-login:hover {
+    background-color: var(--color-button-secondary);
+    transform: scale(1.02);
 }
