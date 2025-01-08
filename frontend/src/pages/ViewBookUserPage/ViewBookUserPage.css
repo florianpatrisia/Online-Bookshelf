@@ -17,6 +17,7 @@
     font-size: 2rem;
     font-weight: bold;
     margin-bottom: 0.5rem;
+    margin-left: -3% !important;
 }
 
 .author {
@@ -25,6 +26,7 @@
     color: gray;
     margin-top: 0;
     margin-bottom: 1rem;
+    margin-left: 13% !important;
 }
 
 .description {
