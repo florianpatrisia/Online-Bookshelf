@@ -16,7 +16,7 @@ export interface ReviewsContextProps {
     reviews: Review[]
     setReviews: React.Dispatch<React.SetStateAction<Review[]>>
     loadReviewsByBookId: (bookId: string) => Promise<void>
-    addReview: (review: Review) => Promise<Review>
+    addReview: (review: Review) => Promise<Review | undefined>
     deleteReview: (id: number) => Promise<void>
 }
 
@@ -26,7 +26,7 @@ const ReviewsContext = createContext<ReviewsContextProps>({
     reviews: initialReviews,
     setReviews: () => {},
     loadReviewsByBookId: async () => {},
-    addReview: async (): Promise<Review> => {},
+    addReview: async (): Promise<Review | undefined> => undefined,
     deleteReview: async () => {},
 })
 
@@ -52,7 +52,7 @@ export const ReviewsProvider: React.FC<{
         }
     }, [bookId]) // Rulează efectul doar când `bookId` se schimbă
 
-    const addReview = async (review: Review): Promise<Review> => {
+    const addReview = async (review: Review): Promise<Review | undefined> => {
         console.log('Review in cntext: ', review)
         try {
             const newReview = await addReviewService(review)
@@ -60,6 +60,7 @@ export const ReviewsProvider: React.FC<{
             return newReview
         } catch (error) {
             console.error('Error adding review:', error)
+            return undefined
         }
     }
 
