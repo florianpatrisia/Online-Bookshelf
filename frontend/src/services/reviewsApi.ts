@@ -2,8 +2,6 @@ import { Review } from '../models/Review'
 import { API_BASE_URL, axiosInstance } from './authApi.ts'
 import { AxiosResponse } from 'axios'
 
-// export const API_BASE_URL = 'http://34.203.236.245:8080'
-
 const handleResponse = async (response: Response) => {
     if (!response.ok) {
         const errorText = await response.text()
