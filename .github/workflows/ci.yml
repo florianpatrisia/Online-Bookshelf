@@ -92,26 +92,64 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: backend-build
-          path: ./backend/build  # Contains build/libs/backend-0.0.1-SNAPSHOT.jar
+          path: ./backend/build
 
   # ---------------------------------------
-  # 4) Deployment job (only on push to main)
-  #    This pulls the artifact from the backend job,
-  #    builds+pushes Docker image, and updates ECS.
+  # 4) Check if backend code changed
+  #    We'll use this job to decide if "deploy" should run
+  # ---------------------------------------
+  check_changes:
+    runs-on: ubuntu-latest
+    needs: [backend]  # after we've built the backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Filter changed files
+        id: filter
+        uses: dorny/paths-filter@v2
+        with:
+          # Compare against the merge base (default for push) or 'main'
+          # so we detect changes to backend/** since last commit on main
+          filters: |
+            backend:
+              - 'backend/**'
+
+      - name: Set output based on backend changes
+        id: set-output
+        run: |
+          if [ "${{ steps.filter.outputs.backend }}" = "true" ]; then
+            echo "::set-output name=deploy_needed::true"
+          else
+            echo "::set-output name=deploy_needed::false"
+          fi
+        shell: bash
+
+    outputs:
+      deploy_needed: ${{ steps.set-output.outputs.deploy_needed }}
+
+  # ---------------------------------------
+  # 5) Deployment job (only on push to main, 
+  #    AND only if backend folder changed)
   # ---------------------------------------
   deploy:
     runs-on: ubuntu-latest
-    needs: [backend]  
+    needs: [check_changes]
 
-    # Only run this job IF it's a push event on main branch
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    # Only run if:
+    # 1) It's a push event on 'main'
+    # 2) The check_changes job says that the backend folder changed
+    if: >
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      needs.check_changes.outputs.deploy_needed == 'true'
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       # Download the build artifacts into the exact same folder structure
-      # so the jar ends up at ./backend/build/libs/backend-0.0.1-SNAPSHOT.jar
       - name: Download Backend Artifact
         uses: actions/download-artifact@v3
         with:
@@ -133,8 +171,6 @@ jobs:
           aws ecr get-login-password --region us-east-1 \
           | docker login --username AWS --password-stdin 122610519658.dkr.ecr.us-east-1.amazonaws.com
 
-      # IMPORTANT: Docker context is the backend directory, 
-      # and the Dockerfile also references build/libs/backend-0.0.1-SNAPSHOT.jar
       - name: Build Docker image
         working-directory: ./backend
         run: docker build -t online-bookshelf-backend:latest .
@@ -147,6 +183,6 @@ jobs:
       - name: Update ECS service
         run: |
           aws ecs update-service \
-          --cluster Page-Turners-ClusterX \
-          --service page-turners-service \
-          --force-new-deployment
+            --cluster Page-Turners-ClusterX \
+            --service page-turners-service \
+            --force-new-deployment
