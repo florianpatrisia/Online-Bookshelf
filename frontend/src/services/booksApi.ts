@@ -85,7 +85,7 @@ export const useFetchBooks = () => {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/api/books/filter/category?category=${encodeURIComponent(category)}`,
+                `http://34.203.236.245:8080/api/books/filter/category?category=${encodeURIComponent(category)}`,
                 {
                     method: 'GET',
                     headers,
